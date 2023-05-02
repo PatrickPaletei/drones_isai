@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">drones_isai</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="selamat_datang">Selamat Datang !</string>
+    <string name="silahkan_login">Silahkan Login ke akun anda menggunakan Email dan Password yang telah didaftarkan</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="remember_me">Ingat akun saya</string>
+    <string name="login">Login</string>
+</resources>
