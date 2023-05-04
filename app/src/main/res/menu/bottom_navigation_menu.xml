@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_cari_lokasi"
+        android:title="Cari Lokasi"
+        android:icon="@mipmap/map_search_foreground" />
+
+    <item
+        android:id="@+id/menu_tren"
+        android:title="Tren"
+        android:icon="@mipmap/tren_nilai_foreground" />
+
+    <item
+        android:id="@+id/menu_kalkulator"
+        android:title="Kalkulator Karbon"
+        android:icon="@mipmap/kalkulator_foreground" />
+    <item
+        android:id="@+id/menu_about"
+        android:icon="@mipmap/about_foreground" />
+
+</menu>
