@@ -6,6 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".KalkulatorFragment">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/top_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/white"
+        android:elevation="4dp"
+        app:layout_scrollFlags="scroll|enterAlways" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -41,13 +49,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
 
         <ImageView
             android:layout_width="300dp"
             android:layout_height="300dp"
             android:layout_gravity="center"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:src="@mipmap/splash" />
 
@@ -117,19 +126,19 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="10dp"
-                    android:textColor="@color/white"
                     android:fontFamily="@font/roboto_regular"
-                    android:textSize="20sp"
-                    android:text="Hasil Estimasi Karbon" />
+                    android:text="Hasil Estimasi Karbon"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="30dp"
+                    android:text="Prediksi nilai karbon tanah :"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:text="Prediksi nilai karbon tanah :" />
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -140,17 +149,17 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="40sp"
+                        android:text="250"
                         android:textColor="@color/green"
-                        android:text="250" />
+                        android:textSize="40sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
+                        android:text="CO2e"
                         android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:text="CO2e" />
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
         </FrameLayout>
@@ -161,10 +170,10 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/blue"
         app:itemIconTint="@color/white"
         app:itemTextColor="@color/white"
-        android:background="@color/blue"
-        android:layout_gravity="bottom"
         app:menu="@menu/bottom_navigation_menu" />
 
 
