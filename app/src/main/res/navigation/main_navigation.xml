@@ -2,4 +2,33 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_navigation" />
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/splashFragment">
+    <fragment
+        android:id="@+id/splashFragment"
+        android:name="id.ac.ukdw.drones_isai.SplashFragment"
+        android:label="fragment_splash"
+        tools:layout="@layout/fragment_splash">
+        <action
+            android:id="@+id/action_splashFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="id.ac.ukdw.drones_isai.AboutFragment"
+        android:label="fragment_about"
+        tools:layout="@layout/fragment_about" >
+        <action
+            android:id="@+id/action_aboutFragment_to_kalkulatorFragment"
+            app:destination="@id/kalkulatorFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/kalkulatorFragment"
+        android:name="id.ac.ukdw.drones_isai.KalkulatorFragment"
+        android:label="fragment_kalkulator"
+        tools:layout="@layout/fragment_kalkulator" >
+        <action
+            android:id="@+id/action_kalkulatorFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
+    </fragment>
+</navigation>
