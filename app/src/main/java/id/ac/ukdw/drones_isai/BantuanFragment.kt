@@ -6,20 +6,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import id.ac.ukdw.adapter.AccordionAdapter
 import id.ac.ukdw.data.AccordionItem
-
+import id.ac.ukdw.drones_isai.databinding.FragmentBantuanBinding
+import id.ac.ukdw.drones_isai.databinding.FragmentKalkulatorBinding
 
 
 class BantuanFragment : Fragment() {
 
     private lateinit var accordionRecyclerView: RecyclerView
+    private var _binding: FragmentBantuanBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_bantuan, container, false)
+        _binding= FragmentBantuanBinding.inflate(inflater,container,false)
+        val view = binding.root
 
         accordionRecyclerView = view.findViewById(R.id.recycler_view)
         accordionRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -42,4 +49,10 @@ class BantuanFragment : Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.backButton.setOnClickListener {
+            findNavController().navigate(R.id.action_bantuanFragment_to_kalkulatorFragment)
+        }
+    }
 }

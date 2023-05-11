@@ -18,7 +18,6 @@ class KalkulatorFragment : Fragment() {
     private val binding get() = _binding!!
 
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -32,9 +31,9 @@ class KalkulatorFragment : Fragment() {
         toolbarTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
 
         binding.icHelp.setOnClickListener {
-            Toast.makeText(requireContext(), "Icon clicked", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_kalkulatorFragment_to_bantuanFragment)
         }
+
 
     }
 
@@ -43,15 +42,6 @@ class KalkulatorFragment : Fragment() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_icon -> {
-                // Handle click on the custom icon here
-                return true
-            }
-            else -> return super.onOptionsItemSelected(item)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,7 +53,6 @@ class KalkulatorFragment : Fragment() {
 
         return view
     }
-
 
 
 }

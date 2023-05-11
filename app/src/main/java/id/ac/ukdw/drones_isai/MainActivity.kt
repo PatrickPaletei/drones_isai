@@ -7,6 +7,8 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI.setupActionBarWithNavController
 import androidx.navigation.ui.setupActionBarWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import id.ac.ukdw.helper.BottomNavigationHelper
 
 class MainActivity : AppCompatActivity() {
 
@@ -17,9 +19,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val navView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
+        val bottomNavigationHelper = BottomNavigationHelper(navHostFragment, navController)
+        bottomNavigationHelper.setupWithBottomNavigationView(navView)
+        // Manually set the highlighted item
+        val menuItemId = R.id.menu_about
+        bottomNavigationHelper.setHighlightedItem(navView, menuItemId)
     }
 
     override fun onSupportNavigateUp(): Boolean {

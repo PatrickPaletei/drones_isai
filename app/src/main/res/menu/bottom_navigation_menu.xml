@@ -5,24 +5,20 @@
     <item
         android:id="@+id/menu_cari_lokasi"
         android:title="Cari Lokasi"
-        android:icon="@mipmap/map_search_foreground"
-        app:labelVisibilityMode="labeled"/>
+        android:icon="@mipmap/map_search_foreground"/>
 
     <item
         android:id="@+id/menu_tren"
         android:title="Tren"
-        android:icon="@mipmap/tren_nilai_foreground"
-        app:labelVisibilityMode="labeled"/>
+        android:icon="@mipmap/tren_nilai_foreground"/>
 
     <item
         android:id="@+id/menu_kalkulator"
         android:title="Kalkulator Karbon"
-        android:icon="@mipmap/kalkulator_foreground"
-        app:labelVisibilityMode="labeled"/>
+        android:icon="@mipmap/kalkulator_foreground"/>
     <item
         android:id="@+id/menu_about"
         android:title="Tentang"
-        android:icon="@mipmap/about_foreground"
-        app:labelVisibilityMode="labeled"/>
+        android:icon="@mipmap/about_foreground"/>
 
 </menu>

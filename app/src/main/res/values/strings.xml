@@ -20,4 +20,5 @@
     <string name="embeded_system_yang_dirancang_dengan_kemampuan_otomatisasi_pengambilan_data_melalui_drone">Embeded system yang dirancang dengan kemampuan otomatisasi pengambilan data melalui drone.</string>
     <string name="website_isai">Website ISAI</string>
     <string name="untuk_visualisasi_informasi_pemetaan_nilai_karbon_kalkulator_karbon_monitoring_tren_perubahan_dan_histori_nilai_karbon_yang_dapat_diakses_dengan_mudah">Untuk visualisasi informasi pemetaan nilai karbon, kalkulator karbon, monitoring tren perubahan dan histori nilai karbon yang dapat diakses dengan mudah</string>
+    <string name="title_activity_splash">SplashActivity</string>
 </resources>

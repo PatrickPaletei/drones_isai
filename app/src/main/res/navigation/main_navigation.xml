@@ -3,16 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_navigation"
-    app:startDestination="@id/splashFragment">
-    <fragment
-        android:id="@+id/splashFragment"
-        android:name="id.ac.ukdw.drones_isai.SplashFragment"
-        android:label="fragment_splash"
-        tools:layout="@layout/fragment_splash">
-        <action
-            android:id="@+id/action_splashFragment_to_aboutFragment"
-            app:destination="@id/aboutFragment" />
-    </fragment>
+    app:startDestination="@id/aboutFragment">
     <fragment
         android:id="@+id/aboutFragment"
         android:name="id.ac.ukdw.drones_isai.AboutFragment"
@@ -21,6 +12,12 @@
         <action
             android:id="@+id/action_aboutFragment_to_kalkulatorFragment"
             app:destination="@id/kalkulatorFragment" />
+        <action
+            android:id="@+id/action_aboutFragment_to_trenFragment"
+            app:destination="@id/trenFragment" />
+        <action
+            android:id="@+id/action_aboutFragment_to_locationFragment"
+            app:destination="@id/locationFragment" />
     </fragment>
     <fragment
         android:id="@+id/kalkulatorFragment"
@@ -28,11 +25,11 @@
         android:label="fragment_kalkulator"
         tools:layout="@layout/fragment_kalkulator" >
         <action
-            android:id="@+id/action_kalkulatorFragment_to_aboutFragment"
-            app:destination="@id/aboutFragment" />
-        <action
             android:id="@+id/action_kalkulatorFragment_to_bantuanFragment"
             app:destination="@id/bantuanFragment" />
+        <action
+            android:id="@+id/action_kalkulatorFragment_to_aboutFragment"
+            app:destination="@id/aboutFragment" />
     </fragment>
     <fragment
         android:id="@+id/bantuanFragment"
@@ -43,4 +40,14 @@
             android:id="@+id/action_bantuanFragment_to_kalkulatorFragment"
             app:destination="@id/kalkulatorFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/locationFragment"
+        android:name="id.ac.ukdw.drones_isai.LocationFragment"
+        android:label="fragment_location"
+        tools:layout="@layout/fragment_location" />
+    <fragment
+        android:id="@+id/trenFragment"
+        android:name="id.ac.ukdw.drones_isai.TrenFragment"
+        android:label="fragment_tren"
+        tools:layout="@layout/fragment_tren" />
 </navigation>
