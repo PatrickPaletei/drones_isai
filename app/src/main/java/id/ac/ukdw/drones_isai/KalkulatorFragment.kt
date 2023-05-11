@@ -2,17 +2,13 @@ package id.ac.ukdw.drones_isai
 
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
-import id.ac.ukdw.drones_isai.databinding.FragmentAboutBinding
 import id.ac.ukdw.drones_isai.databinding.FragmentKalkulatorBinding
 
 
@@ -37,6 +33,7 @@ class KalkulatorFragment : Fragment() {
 
         binding.icHelp.setOnClickListener {
             Toast.makeText(requireContext(), "Icon clicked", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_kalkulatorFragment_to_bantuanFragment)
         }
 
     }

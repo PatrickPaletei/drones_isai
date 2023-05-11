@@ -30,5 +30,17 @@
         <action
             android:id="@+id/action_kalkulatorFragment_to_aboutFragment"
             app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/action_kalkulatorFragment_to_bantuanFragment"
+            app:destination="@id/bantuanFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/bantuanFragment"
+        android:name="id.ac.ukdw.drones_isai.BantuanFragment"
+        android:label="fragment_bantuan"
+        tools:layout="@layout/fragment_bantuan" >
+        <action
+            android:id="@+id/action_bantuanFragment_to_kalkulatorFragment"
+            app:destination="@id/kalkulatorFragment" />
     </fragment>
 </navigation>

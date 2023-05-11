@@ -12,8 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import id.ac.ukdw.adapter.AccordionAdapter
 import id.ac.ukdw.data.AccordionItem
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 
 class BantuanFragment : Fragment() {
 
