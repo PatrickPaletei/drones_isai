@@ -24,8 +24,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
     // Your list of marker data
     private val markerList = listOf(
         MarkerData(
-            37.7749,
-            -122.4194,
+            -7.776756032841577,
+            110.42144480217401,
             "Marker 1",
             "Snippet 1",
             "KL-31",
@@ -35,8 +35,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
             "2.22",
             "2.22"
         ),MarkerData(
-            37.7749,
-            -123.4194,
+            -7.762672251441492,
+            110.39508049474928,
             "Marker 2",
             "Snippet 2",
             "KL-32",

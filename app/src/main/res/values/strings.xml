@@ -21,4 +21,13 @@
     <string name="website_isai">Website ISAI</string>
     <string name="untuk_visualisasi_informasi_pemetaan_nilai_karbon_kalkulator_karbon_monitoring_tren_perubahan_dan_histori_nilai_karbon_yang_dapat_diakses_dengan_mudah">Untuk visualisasi informasi pemetaan nilai karbon, kalkulator karbon, monitoring tren perubahan dan histori nilai karbon yang dapat diakses dengan mudah</string>
     <string name="title_activity_splash">SplashActivity</string>
+    <string name="infomasi_lokasi">Infomasi Lokasi</string>
+    <string name="kode_sample">Kode Sample</string>
+    <string name="nama_lahan">Nama Lahan</string>
+    <string name="komoditas">Komoditas</string>
+    <string name="tanggal_sampling">Tanggal Sampling</string>
+    <string name="karbon_tanah">Karbon Tanah</string>
+    <string name="karbon_tanaman">Karbon Tanaman</string>
+    <string name="tren_nilai_karbon">Tren Nilai Karbon</string>
+    <string name="filter">Filter</string>
 </resources>

@@ -2,7 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <View
+        android:layout_width="20dp"
+        android:layout_height="2dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:background="#c0c0c0" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/roboto_regular"
+        android:text="@string/infomasi_lokasi"
+        android:textColor="@color/black"
+        android:textSize="24sp" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0.65dp"
+        android:layout_marginTop="5dp"
+        android:background="#c0c0c0" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -10,19 +34,6 @@
         android:orientation="vertical"
         android:padding="20dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto_regular"
-            android:text="Infomasi Lokasi"
-            android:layout_marginBottom="5dp"
-            android:textColor="@color/black"
-            android:textSize="24sp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#c0c0c0" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -30,22 +41,20 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:id="@+id/title1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Kode Sample"
+                android:text="@string/kode_sample"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
                 android:id="@+id/kode_sample"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="KL-31"
                 android:textColor="@color/blue"
                 android:textSize="18sp" />
 
@@ -61,17 +70,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Nama Lahan"
+                android:text="@string/nama_lahan"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:fontFamily="@font/roboto_regular"
                 android:id="@+id/kode_lahan"
-                android:text="KL-31"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/blue"
                 android:textSize="18sp" />
 
@@ -87,17 +95,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Komoditas"
+                android:text="@string/komoditas"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:fontFamily="@font/roboto_regular"
                 android:id="@+id/komoditas"
-                android:text="KL-31"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/blue"
                 android:textSize="18sp" />
 
@@ -113,17 +120,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Tanggal Sampling"
+                android:text="@string/tanggal_sampling"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:fontFamily="@font/roboto_regular"
-                android:text="KL-31"
                 android:id="@+id/tanggal_sampling"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/blue"
                 android:textSize="18sp" />
 
@@ -139,17 +145,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Karbon Tanah"
+                android:text="@string/karbon_tanah"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:fontFamily="@font/roboto_regular"
                 android:id="@+id/karbonTanah"
-                android:text="KL-31"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/roboto_regular"
                 android:textColor="@color/blue"
                 android:textSize="18sp" />
 
@@ -165,17 +170,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:fontFamily="@font/roboto_regular"
-                android:text="Karbon Tanaman"
+                android:text="@string/karbon_tanaman"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <TextView
+                android:id="@+id/karbon_tanaman"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="3dp"
                 android:fontFamily="@font/roboto_regular"
-                android:id="@+id/karbon_tanaman"
-                android:text="KL-31"
                 android:textColor="@color/blue"
                 android:textSize="18sp" />
 

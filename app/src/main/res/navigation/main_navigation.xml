@@ -47,7 +47,7 @@
         tools:layout="@layout/fragment_location" />
     <fragment
         android:id="@+id/trenFragment"
-        android:name="id.ac.ukdw.drones_isai.TrenFragment"
+        android:name="id.ac.ukdw.drones_isai.TrendFragment"
         android:label="fragment_tren"
         tools:layout="@layout/fragment_tren" />
 </navigation>
