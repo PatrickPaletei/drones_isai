@@ -1,19 +1,18 @@
 package id.ac.ukdw.drones_isai
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
-import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import id.ac.ukdw.data.MarkerData
@@ -34,14 +33,14 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
             "14/11/2021",
             "2.22",
             "2.22"
-        ),MarkerData(
+        ), MarkerData(
             -7.762672251441492,
             110.39508049474928,
             "Marker 2",
             "Snippet 2",
             "KL-32",
             "Lahan Jogja Siklus 2",
-            "Padi",
+            "Cabe",
             "15/11/2021",
             "2.22",
             "2.22"
@@ -50,6 +49,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
     )
 
     private lateinit var googleMap: GoogleMap
+    private lateinit var searchView: SearchView
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,6 +65,9 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+        setupSearchView(view)
+
     }
 
     override fun onMapReady(gMap: GoogleMap) {
@@ -80,13 +84,19 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
                 .snippet(markerData.snippet)
             googleMap.addMarker(markerOptions)
 
-            boundsBuilder.include(LatLng(markerData.latitude, markerData.longitude)) // Include marker position in the bounds
+            boundsBuilder.include(
+                LatLng(
+                    markerData.latitude,
+                    markerData.longitude
+                )
+            ) // Include marker position in the bounds
         }
 
         // Focus the camera on all the markers
         val bounds = boundsBuilder.build() // Build the LatLngBounds
 
-        val padding = resources.getDimensionPixelSize(R.dimen.map_padding) // Set padding around the bounds (if needed)
+        val padding =
+            resources.getDimensionPixelSize(R.dimen.map_padding) // Set padding around the bounds (if needed)
         val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
 
         googleMap.moveCamera(cameraUpdate)
@@ -127,5 +137,58 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    private fun searchMarkers(query: String) {
+        val filteredMarkers = markerList.filter { markerData ->
+            markerData.namaLahan.contains(query, ignoreCase = true) ||
+                    markerData.komoditas.contains(query, ignoreCase = true)
+        }
+
+        // Clear the map
+        googleMap.clear()
+
+        // Add markers from the filtered list
+        for (markerData in filteredMarkers) {
+            val markerOptions = MarkerOptions()
+                .position(LatLng(markerData.latitude, markerData.longitude))
+                .title(markerData.title)
+                .snippet(markerData.snippet)
+            googleMap.addMarker(markerOptions)
+        }
+
+        // Focus the camera on the markers if there are any
+        if (filteredMarkers.isNotEmpty()) {
+            val boundsBuilder = LatLngBounds.Builder()
+            for (markerData in filteredMarkers) {
+                boundsBuilder.include(LatLng(markerData.latitude, markerData.longitude))
+            }
+            val bounds = boundsBuilder.build()
+            val padding = resources.getDimensionPixelSize(R.dimen.map_padding)
+            val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+            googleMap.moveCamera(cameraUpdate)
+        }
+    }
+
+
+    private fun setupSearchView(view: View) {
+        searchView = view.findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                searchMarkers(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                searchMarkers(newText)
+                return true
+            }
+        })
+
+        // Expand the search view by default...
+        searchView.isIconified = false
+
+
+    }
 
 }
+
+
