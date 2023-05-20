@@ -5,9 +5,23 @@
     android:layout_height="match_parent"
     tools:context=".KarbonTerserapFragment">
 
-    <com.github.mikephil.charting.charts.CandleStickChart
-        android:id="@+id/chart"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.github.mikephil.charting.charts.CandleStickChart
+            android:id="@+id/candleChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5" />
+
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/barChart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5" />
+
+    </LinearLayout>
 
 </FrameLayout>
