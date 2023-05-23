@@ -1,15 +1,15 @@
 package id.ac.ukdw.drones_isai
 
+import android.graphics.Paint
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.ui.graphics.Color
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.CandleStickChart
-import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
@@ -17,30 +17,34 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
-import com.github.mikephil.charting.data.CombinedData
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineData
-import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import id.ac.ukdw.drones_isai.databinding.FragmentKarbonTerserapBinding
 
 class KarbonTerserapFragment : Fragment() {
 
+    private lateinit var binding: FragmentKarbonTerserapBinding
+
+    private val months = arrayOf(
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_karbon_terserap, container, false)
+        binding = FragmentKarbonTerserapBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        val candlestickChart: CandleStickChart = view.findViewById(R.id.candleChart)
-        val barChart: BarChart = view.findViewById(R.id.barChart)
+        setupCandlestickChart()
+        setupBarChart()
+        return view
+    }
 
-        val months = arrayOf(
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-        )
 
+    private fun setupCandlestickChart() {
+        val candlestickChart: CandleStickChart = binding.candleChart
         // Candlestick Chart
         val candleEntries = listOf(
             CandleEntry(0f, 9f, 5f, 7f, 6f),
@@ -54,22 +58,51 @@ class KarbonTerserapFragment : Fragment() {
         val candleMin = candleEntries.minByOrNull { it.low }?.low ?: 0f
         val candleMax = candleEntries.maxByOrNull { it.high }?.high ?: 10f
 
-        // Fill missing data with empty entries
-        val allCandleEntries = ArrayList<CandleEntry>()
-        for (i in 0 until months.size) {
-            val entry = if (i < candleEntries.size) candleEntries[i] else CandleEntry(
-                i.toFloat(),
-                0f,
-                0f,
-                0f,
-                0f
-            )
-            allCandleEntries.add(entry)
-        }
+//        // Fill missing data with empty entries
+//        val allCandleEntries = ArrayList<CandleEntry>()
+//        for (i in 0 until months.size) {
+//            val entry = if (i < candleEntries.size) candleEntries[i] else CandleEntry(
+//                i.toFloat(),
+//                0f,
+//                0f,
+//                0f,
+//                0f
+//            )
+//            allCandleEntries.add(entry)
+//        }
 
-        val candleDataSet = CandleDataSet(allCandleEntries, "Candlestick Data")
+        val candleDataSet = CandleDataSet(candleEntries, "Candlestick Data")
+        candleDataSet.color = ContextCompat.getColor(
+            requireContext(),
+            R.color.blue
+        ) // Color for neutral (open = close)
+        candleDataSet.shadowColor =
+            ContextCompat.getColor(requireContext(), R.color.blue_light_2) // Color for shadow
+        candleDataSet.shadowWidth = 0.7f // Width of the shadow lines
+        candleDataSet.decreasingColor = ContextCompat.getColor(
+            requireContext(),
+            R.color.red_candle
+        ) // Color for decreasing (open > close)
+        candleDataSet.decreasingPaintStyle = Paint.Style.FILL // Style for decreasing candle bars
+        candleDataSet.increasingColor = ContextCompat.getColor(
+            requireContext(),
+            R.color.green
+        ) // Color for increasing (open < close)
+        candleDataSet.increasingPaintStyle = Paint.Style.FILL // Style for increasing candle bars
+        candleDataSet.neutralColor = ContextCompat.getColor(
+            requireContext(),
+            R.color.blue
+        ) // Color for neutral (open = close)
+        candleDataSet.valueTextSize = 10f // Text size for values displayed on the bars
+
         val candleData = CandleData(candleDataSet)
         candlestickChart.data = candleData
+
+        candlestickChart.legend.isEnabled = false
+        candlestickChart.description.isEnabled = false
+
+        // Animate the Candlestick Chart
+        candlestickChart.animateXY(1000, 1000)
 
         val xAxisCandle = candlestickChart.xAxis
         xAxisCandle.valueFormatter = IndexAxisValueFormatter(months)
@@ -78,14 +111,18 @@ class KarbonTerserapFragment : Fragment() {
         xAxisCandle.granularity = 1f
 
         candlestickChart.setVisibleXRangeMaximum(5f) // Set the visible range on the x-axis
+        candlestickChart.axisRight.isEnabled = false
 
         val yAxisCandle = candlestickChart.axisLeft
         yAxisCandle.axisMinimum = candleMin - 1f
         yAxisCandle.axisMaximum = candleMax + 1f
 
         candlestickChart.invalidate()
+    }
 
-// Bar Chart
+    private fun setupBarChart() {
+        val barChart: BarChart = binding.barChart
+        // Bar Chart
         val barEntries = listOf(
             BarEntry(0f, 8f),
             BarEntry(1f, 5f),
@@ -109,20 +146,13 @@ class KarbonTerserapFragment : Fragment() {
         dataSet2.color = ContextCompat.getColor(requireContext(), R.color.blue_light)
 
         val barData = BarData(dataSet1, dataSet2)
-
-// Fill missing data with empty entries
-        val allBarEntries = ArrayList<BarEntry>()
-        for (i in 0 until months.size) {
-            val entry = if (i < barEntries.size) barEntries[i] else BarEntry(i.toFloat(), 0f)
-            allBarEntries.add(entry)
-        }
-
-// Set the x-axis labels for all 12 months
+        // Set the x-axis labels for all 12 months
         val xAxisLabels = ArrayList<String>()
-        for (i in 0 until months.size) {
+        for (i in       months.indices) {
             val label = if (i < barEntries.size) months[i] else ""
             xAxisLabels.add(label)
         }
+
 
         barData.barWidth = 0.35f
         barChart.data = barData
@@ -130,13 +160,15 @@ class KarbonTerserapFragment : Fragment() {
 // Configure other properties of the bar chart as needed
         barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels.toTypedArray())
         barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        barChart.xAxis.setDrawGridLines(false)
+//        barChart.xAxis.setDrawGridLines(false)
         barChart.xAxis.granularity = 1f
+        barChart.xAxis.spaceMin = 0.5f // Set the minimum spacing between labels
+        barChart.xAxis.spaceMax = 0.5f // Set the maximum spacing between labels
+        barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
+        barChart.description.isEnabled = false
+        barChart.legend.isEnabled = false
+        barChart.groupBars(-0.3f, 0.15f, 0.04f) // Adjust the spacing between groups and bars
 
-        barChart.groupBars(0f, 0.3f, 0.05f) // Adjust the spacing between groups and bars
-
-// Set the visible range on the x-axis to show all 12 months
-        barChart.setVisibleXRangeMaximum(12f)
 
 // Set the range for the y-axis
         val yAxis = barChart.axisLeft
@@ -146,9 +178,6 @@ class KarbonTerserapFragment : Fragment() {
         barChart.axisRight.isEnabled = false
 
         barChart.invalidate()
-
-        return view
     }
-
 
 }

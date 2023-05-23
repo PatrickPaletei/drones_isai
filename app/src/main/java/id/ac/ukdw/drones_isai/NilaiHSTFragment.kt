@@ -5,55 +5,89 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.charts.BarChart
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [NilaiHSTFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class NilaiHSTFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_nilai_h_s_t, container, false)
+        val view = inflater.inflate(R.layout.fragment_nilai_h_s_t, container, false)
+
+        val barChart: BarChart = view.findViewById(R.id.barChart)
+
+        val months = arrayOf(
+            "HST0", "HST1", "HST2"
+        )
+
+        // Bar Chart
+        val barEntries = listOf(
+            BarEntry(0f, 8f),
+            BarEntry(1f, 5f),
+            BarEntry(2f, 7f)
+        )
+
+        val dataSet1 = BarDataSet(barEntries, "Bar 1")
+        dataSet1.color = ContextCompat.getColor(requireContext(), R.color.blue)
+
+// Create a separate list of entries for dataSet2
+        val dataSet2Entries = listOf(
+            BarEntry(0f, 2f),
+            BarEntry(1f, 4f),
+            BarEntry(2f, 3f)
+        )
+        val dataSet2 = BarDataSet(dataSet2Entries, "Bar 2")
+        dataSet2.color = ContextCompat.getColor(requireContext(), R.color.blue_light)
+
+        val barData = BarData(dataSet1, dataSet2)
+
+
+
+// Set the x-axis labels for all 12 months
+        val xAxisLabels = ArrayList<String>()
+        for (i in months.indices) {
+            val label = if (i < barEntries.size) months[i]  else ""
+            xAxisLabels.add(label)
+        }
+
+        barData.barWidth = 0.35f
+        barChart.data = barData
+
+// Configure other properties of the bar chart as needed
+        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels.toTypedArray())
+
+        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        barChart.xAxis.setDrawGridLines(false)
+        barChart.xAxis.granularity = 1f
+        barChart.xAxis.spaceMin = 0.5f // Set the minimum spacing between labels
+        barChart.xAxis.spaceMax = 0.5f // Set the maximum spacing between labels
+        barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
+
+        barChart.groupBars(-0.4f, 0.15f, 0.05f) // Adjust the spacing between groups and bars
+
+
+// Set the range for the y-axis
+        val yAxis = barChart.axisLeft
+        yAxis.axisMinimum = 0f
+
+        // Disable the y-axis on the right side
+        barChart.axisRight.isEnabled = false
+
+        barChart.invalidate()
+
+        return view
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment NilaiHSTFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            NilaiHSTFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }

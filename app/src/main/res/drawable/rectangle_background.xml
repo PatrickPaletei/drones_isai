@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- rectangle_background.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke
+        android:color="#444141"
+        android:width="0.5dp"
+    />
+    <solid android:color="@android:color/transparent" /> <!-- Set the background color as transparent -->
+    <corners android:radius="8dp" /> <!-- Adjust the radius for rounded corners if needed -->
+</shape>
+

@@ -30,4 +30,7 @@
     <string name="karbon_tanaman">Karbon Tanaman</string>
     <string name="tren_nilai_karbon">Tren Nilai Karbon</string>
     <string name="filter">Filter</string>
+    <string name="defisit">Defisit</string>
+    <string name="surplus">Surplus</string>
+    <string name="karbon_lingkungan">Karbon Lingkungan</string>
 </resources>
