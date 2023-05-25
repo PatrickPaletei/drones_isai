@@ -33,4 +33,5 @@
     <string name="defisit">Defisit</string>
     <string name="surplus">Surplus</string>
     <string name="karbon_lingkungan">Karbon Lingkungan</string>
+    <string name="jumlah_karbon_gr">Jumlah Karbon(gr)</string>
 </resources>

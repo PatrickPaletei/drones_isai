@@ -1,11 +1,11 @@
 package id.ac.ukdw.drones_isai
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -13,23 +13,33 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import id.ac.ukdw.drones_isai.databinding.FragmentNilaiHSTBinding
 
 
 class NilaiHSTFragment : Fragment() {
 
+    private lateinit var binding: FragmentNilaiHSTBinding
+    private val months = arrayOf(
+        "HST0", "HST1", "HST2"
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_nilai_h_s_t, container, false)
+        binding = FragmentNilaiHSTBinding.inflate(inflater, container, false)
+        val view = binding.root
 
-        val barChart: BarChart = view.findViewById(R.id.barChart)
 
-        val months = arrayOf(
-            "HST0", "HST1", "HST2"
-        )
+
+        setupBarChart()
+        return view
+    }
+
+    private fun setupBarChart() {
+        val barChart: BarChart = binding.barChart
+
 
         // Bar Chart
         val barEntries = listOf(
@@ -53,11 +63,10 @@ class NilaiHSTFragment : Fragment() {
         val barData = BarData(dataSet1, dataSet2)
 
 
-
 // Set the x-axis labels for all 12 months
         val xAxisLabels = ArrayList<String>()
         for (i in months.indices) {
-            val label = if (i < barEntries.size) months[i]  else ""
+            val label = if (i < barEntries.size) months[i] else ""
             xAxisLabels.add(label)
         }
 
@@ -73,7 +82,8 @@ class NilaiHSTFragment : Fragment() {
         barChart.xAxis.spaceMin = 0.5f // Set the minimum spacing between labels
         barChart.xAxis.spaceMax = 0.5f // Set the maximum spacing between labels
         barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
-
+        barChart.description.isEnabled = false
+        barChart.legend.isEnabled = false
         barChart.groupBars(-0.4f, 0.15f, 0.05f) // Adjust the spacing between groups and bars
 
 
@@ -85,8 +95,6 @@ class NilaiHSTFragment : Fragment() {
         barChart.axisRight.isEnabled = false
 
         barChart.invalidate()
-
-        return view
     }
 
 
