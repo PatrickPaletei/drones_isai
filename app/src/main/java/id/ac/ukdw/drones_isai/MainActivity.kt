@@ -1,13 +1,14 @@
 package id.ac.ukdw.drones_isai
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import id.ac.ukdw.helper.BottomNavigationHelper
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(),NilaiHSTFragment.BottomNavigationViewListener {
 
 
     private lateinit var navController: NavController
@@ -34,7 +35,19 @@ class MainActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
+
+    override fun hideBottomNavigationView() {
+        // Hide the bottom navigation view here
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.visibility = View.GONE
+    }
+
+    fun showBottomNavigationView() {
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        bottomNavigationView.visibility = View.VISIBLE
+    }
 }
+
 
 
 

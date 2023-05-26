@@ -83,6 +83,9 @@ dependencies {
     //chart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
+    //gosn
+    implementation 'com.google.code.gson:gson:2.8.8'
+
 
 
 

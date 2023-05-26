@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".NilaiHSTFragment">
-
+    android:screenOrientation="landscape">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.6"
+        android:layout_weight="0.9"
         android:orientation="horizontal">
 
         <TextView
@@ -28,13 +26,23 @@
             android:textColor="@color/black"
             android:textSize="12sp" />
 
-
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/barChart"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
 
+            <ImageView
+                android:id="@+id/close_land"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|bottom"
+                android:layout_margin="15dp"
+                android:src="@drawable/ic_close"/>
+        </FrameLayout>
 
 
     </LinearLayout>
@@ -42,31 +50,18 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.4"
+        android:layout_weight="0.1"
         android:orientation="vertical">
 
-        <FrameLayout
+        <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/roboto_regular"
-                android:gravity="center"
-                android:padding="10dp"
-                android:text="@string/hari_setelah_tanam_hst"
-                android:textColor="@color/black"
-                android:textSize="12sp" />
-
-            <ImageView
-                android:id="@+id/zoomChart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center"
-                android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_zoom" />
-        </FrameLayout>
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto_regular"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="Hari Setelah Tanam (HST)"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -78,7 +73,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:baselineAligned="false"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -97,7 +91,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
                         android:fontFamily="@font/roboto_regular"
                         android:text="@string/karbon_tanaman"
                         android:textColor="@color/black"
@@ -119,7 +113,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginLeft="10dp"
                         android:fontFamily="@font/roboto_regular"
                         android:text="@string/karbon_tanah"
                         android:textColor="@color/black"

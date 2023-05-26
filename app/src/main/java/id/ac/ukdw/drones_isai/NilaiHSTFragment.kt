@@ -1,11 +1,13 @@
 package id.ac.ukdw.drones_isai
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
@@ -19,6 +21,10 @@ import id.ac.ukdw.drones_isai.databinding.FragmentNilaiHSTBinding
 class NilaiHSTFragment : Fragment() {
 
     private lateinit var binding: FragmentNilaiHSTBinding
+    private var bottomNavigationViewListener: BottomNavigationViewListener? = null
+    // Declare a member variable for barData
+    private lateinit var barData: BarData
+
     private val months = arrayOf(
         "HST0", "HST1", "HST2"
     )
@@ -31,13 +37,25 @@ class NilaiHSTFragment : Fragment() {
         binding = FragmentNilaiHSTBinding.inflate(inflater, container, false)
         val view = binding.root
 
-
-
         setupBarChart()
+        binding.zoomChart.setOnClickListener {
+            val newFragment = HstLandFragment()
+            val parentFragment = parentFragment
+            if (parentFragment is Fragment) {
+                parentFragment.parentFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, newFragment)
+                    .addToBackStack(null)
+                    .commit()
+                val mainActivity = activity as? MainActivity
+                mainActivity?.hideBottomNavigationView()
+            }
+        }
+
+
         return view
     }
 
-    private fun setupBarChart() {
+    private fun setupBarChart(){
         val barChart: BarChart = binding.barChart
 
 
@@ -95,6 +113,28 @@ class NilaiHSTFragment : Fragment() {
         barChart.axisRight.isEnabled = false
 
         barChart.invalidate()
+
+
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        // Verify that the activity implements the interface
+        if (context is BottomNavigationViewListener) {
+            bottomNavigationViewListener = context
+        } else {
+            throw RuntimeException("$context must implement BottomNavigationViewListener")
+        }
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        bottomNavigationViewListener = null
+    }
+
+
+    interface BottomNavigationViewListener {
+        fun hideBottomNavigationView()
     }
 
 

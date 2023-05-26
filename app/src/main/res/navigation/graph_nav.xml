@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/graph_nav"
+    app:startDestination="@id/nilaiHSTFragment">
+
+    <fragment
+        android:id="@+id/nilaiHSTFragment"
+        android:name="id.ac.ukdw.drones_isai.NilaiHSTFragment"
+        android:label="fragment_nilai_h_s_t"
+        tools:layout="@layout/fragment_nilai_h_s_t" >
+        <action
+            android:id="@+id/action_nilaiHSTFragment_to_hstLandFragment"
+            app:destination="@id/hstLandFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/hstLandFragment"
+        android:name="id.ac.ukdw.drones_isai.HstLandFragment"
+        android:label="HstLandFragment" >
+        <action
+            android:id="@+id/action_hstLandFragment_to_nilaiHSTFragment"
+            app:destination="@id/nilaiHSTFragment" />
+    </fragment>
+</navigation>

@@ -39,6 +39,18 @@ class KarbonTerserapFragment : Fragment() {
 
         setupCandlestickChart()
         setupBarChart()
+        binding.fabZoom.setOnClickListener {
+            val newFragment = TerserapLandFragment()
+            val parentFragment = parentFragment
+            if (parentFragment is Fragment) {
+                parentFragment.parentFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, newFragment)
+                    .addToBackStack(null)
+                    .commit()
+                val mainActivity = activity as? MainActivity
+                mainActivity?.hideBottomNavigationView()
+            }
+        }
         return view
     }
 

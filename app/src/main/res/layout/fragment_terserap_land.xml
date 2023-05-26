@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EmisiKarbonFragment">
+    tools:context=".KarbonTerserapFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -153,8 +153,9 @@
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="18dp"
-                    android:background="@drawable/rectangle_background">
+                    android:layout_margin="12dp"
+                    android:background="@drawable/rectangle_background"
+                    android:padding="8dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -172,7 +173,7 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/rectangle_tanaman" />
+                                android:src="@drawable/rectangle_karbon_tanaman" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -194,7 +195,7 @@
                             <ImageView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:src="@drawable/rectangle_tanah" />
+                                android:src="@drawable/rectangle_karbon_tanah" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -203,28 +204,6 @@
                                 android:layout_marginLeft="10dp"
                                 android:fontFamily="@font/roboto_regular"
                                 android:text="@string/karbon_tanah"
-                                android:textColor="@color/black"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="2dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/rectangle_lingkungan" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="@string/karbon_lingkungan"
                                 android:textColor="@color/black"
                                 android:textSize="10sp" />
                         </LinearLayout>
@@ -240,11 +219,12 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_zoom"
+        android:id="@+id/fab_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
-        android:layout_margin="20dp"
         android:backgroundTint="@color/blue_light"
-        android:src="@drawable/ic_zoom" />
+        android:src="@drawable/ic_close"
+        android:layout_margin="20dp"
+        />
 </FrameLayout>
