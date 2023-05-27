@@ -13,6 +13,7 @@
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
+<!--        <item name="spinnerStyle">@style/SpinnerStyle</item>-->
 
     </style>
     <style name="AppBottomSheetDialogTheme"
@@ -25,6 +26,13 @@
     </style>
     <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
+        <item name="android:drawableEnd">@drawable/ic_drop</item>
+        <item name="android:background">@drawable/border_outline</item>
+
+        <!-- Add more attributes as per your requirements -->
     </style>
 
 </resources>

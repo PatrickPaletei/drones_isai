@@ -35,4 +35,7 @@
     <string name="karbon_lingkungan">Karbon Lingkungan</string>
     <string name="jumlah_karbon_gr">Jumlah Karbon(gr)</string>
     <string name="hari_setelah_tanam_hst">Hari Setelah Tanam (HST)</string>
+    <string name="tahun">Tahun</string>
+    <string name="data_karbon">Data Karbon</string>
+    <string name="jenis_komoditas">Jenis Komoditas</string>
 </resources>
