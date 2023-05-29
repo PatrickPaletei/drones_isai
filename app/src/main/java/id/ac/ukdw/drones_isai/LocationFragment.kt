@@ -1,6 +1,7 @@
 package id.ac.ukdw.drones_isai
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,11 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import id.ac.ukdw.data.MarkerData
+import id.ac.ukdw.data.apiHelper.ApiClient
+import id.ac.ukdw.data.model.GetMapsResponse
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 
 class LocationFragment : Fragment(), OnMapReadyCallback {
@@ -70,72 +76,115 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
 
     }
 
+
+
     override fun onMapReady(gMap: GoogleMap) {
         googleMap = gMap
 
         // Add markers from the markerList
         val boundsBuilder = LatLngBounds.Builder() // Create a LatLngBounds builder
 
-        // Add markers from the markerList
-        for (markerData in markerList) {
-            val markerOptions = MarkerOptions()
-                .position(LatLng(markerData.latitude, markerData.longitude))
-                .title(markerData.title)
-                .snippet(markerData.snippet)
-            googleMap.addMarker(markerOptions)
+        ApiClient.instance.getMaps()
+            .enqueue(object : Callback<GetMapsResponse> {
+                override fun onResponse(
+                    call: Call<GetMapsResponse>,
+                    response: Response<GetMapsResponse>
+                ) {
+                    val responseBody = response.body()!!
+                    val feature = responseBody.body.features
+                    if (response.isSuccessful) {
+                        for (myData in feature) {
+                            val koordinat = myData.geometry.coordinates
+                            val latitude = koordinat[1]
+                            val longitude = koordinat[0]
 
-            boundsBuilder.include(
-                LatLng(
-                    markerData.latitude,
-                    markerData.longitude
-                )
-            ) // Include marker position in the bounds
-        }
+                            val markerOptions = MarkerOptions()
+                                .position(LatLng(latitude, longitude))
+                                .title("Marker")
+                                .snippet("snip")
+                            googleMap.addMarker(markerOptions)
 
-        // Focus the camera on all the markers
-        val bounds = boundsBuilder.build() // Build the LatLngBounds
+                            boundsBuilder.include(
+                                LatLng(
+                                    latitude,
+                                    longitude
+                                )
+                            )
+                            // Focus the camera on all the markers
+                            val bounds = boundsBuilder.build() // Build the LatLngBounds
 
-        val padding =
-            resources.getDimensionPixelSize(R.dimen.map_padding) // Set padding around the bounds (if needed)
-        val cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding)
+                            val padding =
+                                resources.getDimensionPixelSize(R.dimen.map_padding) // Set padding around the bounds (if needed)
+                            val cameraUpdate =
+                                CameraUpdateFactory.newLatLngBounds(bounds, padding)
+                            googleMap.moveCamera(cameraUpdate)
 
-        googleMap.moveCamera(cameraUpdate)
+                        }
 
-        // Set a marker click listener
-        googleMap.setOnMarkerClickListener { marker ->
-            val markerData = markerList.find { data ->
-                data.latitude == marker.position.latitude && data.longitude == marker.position.longitude
-            }
+                    }
+                    Log.d("Response :", response.body().toString())
 
-            // Show a BottomSheetDialog when a marker is clicked
-            if (markerData != null) {
-                val bottomSheetDialog = BottomSheetDialog(requireContext())
-                val view = layoutInflater.inflate(R.layout.layout_popup_dialog, null)
 
-                // Access the views in the bottom sheet layout
-                val kodeSampelTextView = view.findViewById<TextView>(R.id.kode_sample)
-                val namaLahanTextView = view.findViewById<TextView>(R.id.kode_lahan)
-                val komoditasTextView = view.findViewById<TextView>(R.id.komoditas)
-                val tglSampelTextView = view.findViewById<TextView>(R.id.tanggal_sampling)
-                val karbonTanahTextView = view.findViewById<TextView>(R.id.karbonTanah)
-                val karbonTanamahTextView = view.findViewById<TextView>(R.id.karbon_tanaman)
+                    //  Set a marker click listener
+                    googleMap.setOnMarkerClickListener { marker ->
+                        val markerData = markerList.find { data ->
+                            data.latitude == marker.position.latitude && data.longitude == marker.position.longitude
+                        }
 
-                // Set the data from the markerData to the views
-                kodeSampelTextView.text = markerData.KodeSampel
-                namaLahanTextView.text = markerData.namaLahan
-                komoditasTextView.text = markerData.komoditas
-                tglSampelTextView.text = markerData.tglSampel
-                karbonTanahTextView.text = markerData.karbonTanah
-                karbonTanamahTextView.text = markerData.karbonTanah
+                        // Show a BottomSheetDialog when a marker is clicked
+                        if (markerData != null) {
+                            val bottomSheetDialog =
+                                BottomSheetDialog(requireContext())
+                            val view = layoutInflater.inflate(
+                                R.layout.layout_popup_dialog,
+                                null
+                            )
 
-                bottomSheetDialog.setContentView(view)
-                bottomSheetDialog.show()
-            }
+                            // Access the views in the bottom sheet layout
+                            val kodeSampelTextView =
+                                view.findViewById<TextView>(R.id.kode_sample)
+                            val namaLahanTextView =
+                                view.findViewById<TextView>(R.id.kode_lahan)
+                            val komoditasTextView =
+                                view.findViewById<TextView>(R.id.komoditas)
+                            val tglSampelTextView =
+                                view.findViewById<TextView>(R.id.tanggal_sampling)
+                            val karbonTanahTextView =
+                                view.findViewById<TextView>(R.id.karbonTanah)
+                            val karbonTanamahTextView =
+                                view.findViewById<TextView>(R.id.karbon_tanaman)
 
-            // Return true to consume the event and prevent the default behavior (e.g., showing the info window)
-            true
-        }
+                            // Set the data from the markerData to the views
+                            kodeSampelTextView.text = markerData.KodeSampel
+                            namaLahanTextView.text = markerData.namaLahan
+                            komoditasTextView.text = markerData.komoditas
+                            tglSampelTextView.text = markerData.tglSampel
+                            karbonTanahTextView.text = markerData.karbonTanah
+                            karbonTanamahTextView.text = markerData.karbonTanah
+
+                            bottomSheetDialog.setContentView(view)
+                            bottomSheetDialog.show()
+                        }
+
+                        // Return true to consume the event and prevent the default behavior (e.g., showing the info window)
+                        true
+                    }// Include marker position in the bounds
+                }
+
+                override fun onFailure(call: Call<GetMapsResponse>, t: Throwable) {
+                    Log.d("nodata", "onFailure: " + t.message)
+                }
+
+            })
+
+//        // Add markers from the markerList
+//        for (markerData in markerList) {
+//
+//        }
+
+
     }
+
 
     private fun searchMarkers(query: String) {
         val filteredMarkers = markerList.filter { markerData ->
@@ -167,7 +216,6 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
             googleMap.moveCamera(cameraUpdate)
         }
     }
-
 
     private fun setupSearchView(view: View) {
         searchView = view.findViewById(R.id.searchView)
