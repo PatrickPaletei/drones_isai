@@ -18,13 +18,8 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 
-import id.ac.ukdw.data.model.GetMapsResponse
 import id.ac.ukdw.data.presenter.LocationPresenter
 import id.ac.ukdw.data.presenter.LocationView
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-
 
 
 class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
@@ -105,8 +100,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
                 namaLahanTextView.text = markerData.namaLahan
                 komoditasTextView.text = markerData.komoditas
                 tglSampelTextView.text = markerData.tglSampel
-                karbonTanahTextView.text = markerData.karbonTanah
-                karbonTanamahTextView.text = markerData.karbonTanah
+                karbonTanahTextView.text = markerData.carbon_tanah
+                karbonTanamahTextView.text = markerData.carbon_tanah
 
                 bottomSheetDialog.setContentView(view)
                 bottomSheetDialog.show()

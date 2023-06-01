@@ -40,19 +40,32 @@ class LocationPresenter(private val view: LocationView) {
 
     private fun processMarkers(coordinat: List<Body>) {
         for (i in coordinat) {
-            val marker = MarkerData(
-                i.long.toDouble(),
-                i.lat.toDouble(),
-                "marker",
-                "snip",
-                i.idSample,
-                "lahan ${i.loc}",
-                i.comodity,
-                i.date,
-                i.carbonTanah,
-                i.carbonTanaman
-            )
-            markerList.add(marker)
+            if(i.carbonTanah != null && i.carbonTanaman !=null){
+                val lat = i.lat
+                val long = i.long
+                val idSample = i.idSample
+                val namaLahan = "lahan ${i.loc}"
+                val comodity = i.comodity
+                val date = i.date
+                val carbon_tanah = i.carbonTanah
+                val carbon_tanaman = i.carbonTanaman
+                Log.d("data i", carbon_tanah.toString() )
+                val marker = MarkerData(
+                    latitude = lat.toDouble(),
+                    longitude = long.toDouble(),
+                    title = "title",
+                    snippet = "snip",
+                    KodeSampel = idSample,
+                    namaLahan = namaLahan,
+                    komoditas = comodity,
+                    tglSampel = date,
+                    carbon_tanah = carbon_tanah,
+                    karbonTanaman = carbon_tanaman
+
+                )
+                markerList.add(marker)
+            }else Log.d("data carbon kosong", "kosong $i " )
+
         }
     }
 
