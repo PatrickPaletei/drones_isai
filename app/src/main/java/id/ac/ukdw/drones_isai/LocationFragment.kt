@@ -31,34 +31,7 @@ import retrofit2.Response
 
 class LocationFragment : Fragment(), OnMapReadyCallback {
 
-    // Your list of marker data
 
-//    private val markerList = listOf(
-//        MarkerData(
-//            -7.776756032841577,
-//            110.42144480217401,
-//            "Marker 1",
-//            "Snippet 1",
-//            "KL-31",
-//            "Lahan Jogja Siklus 1",
-//            "Padi",
-//            "14/11/2021",
-//            "2.22",
-//            "2.22"
-//        ), MarkerData(
-//            -7.762672251441492,
-//            110.39508049474928,
-//            "Marker 2",
-//            "Snippet 2",
-//            "KL-32",
-//            "Lahan Jogja Siklus 2",
-//            "Cabe",
-//            "15/11/2021",
-//            "2.22",
-//            "2.22"
-//        )
-//        // Add more marker data as needed
-//    )
     val markerList = mutableListOf<MarkerData>()
     private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
