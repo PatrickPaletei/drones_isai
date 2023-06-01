@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import id.ac.ukdw.drones_isai.MainActivity
 import id.ac.ukdw.drones_isai.R
 
 class SplashActivity : AppCompatActivity() {
@@ -14,7 +13,7 @@ class SplashActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash)
 
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this@SplashActivity,MainActivity::class.java))
+            startActivity(Intent(this@SplashActivity, MainActivity::class.java))
         },2000)
     }
 }

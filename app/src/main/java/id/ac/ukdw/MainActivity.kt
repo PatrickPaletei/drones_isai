@@ -1,4 +1,4 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw
 
 import android.os.Bundle
 import android.view.View
@@ -6,9 +6,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import id.ac.ukdw.drones_isai.NilaiHSTFragment
+import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.helper.BottomNavigationHelper
 
-class MainActivity : AppCompatActivity(),NilaiHSTFragment.BottomNavigationViewListener {
+class MainActivity : AppCompatActivity(), NilaiHSTFragment.BottomNavigationViewListener {
 
 
     private lateinit var navController: NavController
