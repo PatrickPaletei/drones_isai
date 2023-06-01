@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import id.ac.ukdw.MainActivity
 import id.ac.ukdw.drones_isai.databinding.FragmentEmisiLandBinding
 
 
