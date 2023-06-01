@@ -1,5 +1,3 @@
-package id.ac.ukdw.data
-
 data class MarkerData(
     val latitude: Double,
     val longitude: Double,

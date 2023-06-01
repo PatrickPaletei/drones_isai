@@ -45,6 +45,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
+    namespace 'id.ac.ukdw.drones_isai'
 }
 
 
@@ -82,7 +83,6 @@ dependencies {
 
     //chart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-
 
 
     // retrofit

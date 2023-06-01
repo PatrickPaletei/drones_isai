@@ -18,6 +18,7 @@ import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import id.ac.ukdw.MainActivity
 import id.ac.ukdw.drones_isai.databinding.FragmentEmisiKarbonBinding
 
 

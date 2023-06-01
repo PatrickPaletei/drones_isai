@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class GetMapsResponse(
     @SerializedName("body")
-    val body: Body,
+    val body: List<Body>,
     @SerializedName("statusCode")
     val statusCode: Int
 )
