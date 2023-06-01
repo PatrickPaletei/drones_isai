@@ -2,7 +2,6 @@ package id.ac.ukdw.drones_isai
 
 import MarkerData
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +9,6 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import com.google.android.gms.common.api.Api
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -22,48 +19,18 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import id.ac.ukdw.data.apiHelper.ApiClient
 import id.ac.ukdw.data.model.GetMapsResponse
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import id.ac.ukdw.data.presenter.LocationPresenter
+import id.ac.ukdw.data.presenter.LocationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 
-class LocationFragment : Fragment(), OnMapReadyCallback {
+class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
 
-    // Your list of marker data
-
-//    private val markerList = listOf(
-//        MarkerData(
-//            -7.776756032841577,
-//            110.42144480217401,
-//            "Marker 1",
-//            "Snippet 1",
-//            "KL-31",
-//            "Lahan Jogja Siklus 1",
-//            "Padi",
-//            "14/11/2021",
-//            "2.22",
-//            "2.22"
-//        ), MarkerData(
-//            -7.762672251441492,
-//            110.39508049474928,
-//            "Marker 2",
-//            "Snippet 2",
-//            "KL-32",
-//            "Lahan Jogja Siklus 2",
-//            "Cabe",
-//            "15/11/2021",
-//            "2.22",
-//            "2.22"
-//        )
-//        // Add more marker data as needed
-//    )
-    val markerList = mutableListOf<MarkerData>()
+    private lateinit var presenter: LocationPresenter
     private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
-    private var dataLoaded = false
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,69 +42,23 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        presenter = LocationPresenter(this)
+
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
         setupSearchView(view)
 
-        loadData()
+        presenter.loadData()
     }
 
-
-    private fun loadData() {
-        ApiClient.instance.getMaps().enqueue(object : Callback<GetMapsResponse> {
-            override fun onResponse(
-                call: Call<GetMapsResponse>,
-                response: Response<GetMapsResponse>
-            ) {
-                val code = response.code()
-                val body = response.body()
-                if (code == 200) {
-                    if (body != null) {
-                        val coordinat = body.body
-                        for (i in coordinat) {
-                            val marker = MarkerData(
-                                i.long.toDouble(),
-                                i.lat.toDouble(),
-                                "marker ",
-                                "snip",
-                                i.idSample,
-                                "lahan ${i.loc}",
-                                i.comodity,
-                                i.date,
-                                i.carbonTanah,
-                                i.carbonTanaman
-                            )
-                            markerList.add(marker)
-                        }
-                    }
-                }
-                dataLoaded = true
-                checkDataAndMapReady()
-            }
-
-            override fun onFailure(call: Call<GetMapsResponse>, t: Throwable) {
-                Log.d("nodata", "onFailure: " + t.message)
-                dataLoaded = true
-                checkDataAndMapReady()
-            }
-        })
+    // Implement LocationView interface methods
+    override fun isMapReady(): Boolean {
+        return ::googleMap.isInitialized
     }
 
-
-    override fun onMapReady(gMap: GoogleMap) {
-        googleMap = gMap
-        checkDataAndMapReady()
-    }
-
-
-    private fun checkDataAndMapReady() {
-        if (dataLoaded && ::googleMap.isInitialized) {
-            displayMarkers()
-        }
-    }
-
-    private fun displayMarkers() {
+    override fun displayMarkers(markerList: List<MarkerData>) {
+        // Your existing displayMarkers() implementation goes here
         val boundsBuilder = LatLngBounds.Builder()
 
         for (markerData in markerList) {
@@ -192,29 +113,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-    private fun setupSearchView(view: View) {
-        searchView = view.findViewById(R.id.searchView)
-        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchMarkers(query)
-                return true
-            }
-
-            override fun onQueryTextChange(newText: String): Boolean {
-                searchMarkers(newText)
-                return true
-            }
-        })
-
-        searchView.isIconified = false
-    }
-
-    private fun searchMarkers(query: String) {
-        val filteredMarkers = markerList.filter { markerData ->
-            markerData.namaLahan.contains(query, ignoreCase = true) ||
-                    markerData.komoditas.contains(query, ignoreCase = true)
-        }
-
+    override fun updateMarkers(filteredMarkers: List<MarkerData>) {
+        // Your existing searchMarkers() implementation goes here
         googleMap.clear()
 
         for (markerData in filteredMarkers) {
@@ -237,9 +137,31 @@ class LocationFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
+    // Other methods in LocationFragment
+    private fun setupSearchView(view: View) {
+        searchView = view.findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                presenter.searchMarkers(query)
+                return true
+            }
 
+            override fun onQueryTextChange(newText: String): Boolean {
+                presenter.searchMarkers(newText)
+                return true
+            }
+        })
 
+        searchView.isIconified = false
+    }
+
+    override fun onMapReady(gMap: GoogleMap) {
+        googleMap = gMap
+    }
+
+    // Other methods in LocationFragment
 }
+
 
 
 
