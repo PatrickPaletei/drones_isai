@@ -79,6 +79,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
 
             }
 
+
         }
 
         val bounds = boundsBuilder.build()
