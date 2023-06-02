@@ -59,18 +59,28 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         val boundsBuilder = LatLngBounds.Builder()
 
         for (markerData in markerList) {
-            val markerOptions = MarkerOptions()
-                .position(LatLng(markerData.latitude, markerData.longitude))
-                .title(markerData.title)
-                .snippet(markerData.snippet)
-            googleMap.addMarker(markerOptions)
+            if (markerData.latitude != 0.0 && markerData.longitude != 0.0
+                && markerData.komoditas != "null" && markerData.namaLahan != "null"
+                && markerData.karbonTanah != "null" && markerData.karbonTanaman != "null"
+                && markerData.KodeSampel != "null" && markerData.tglSampel != "null"
+            ) {
+                val markerOptions = MarkerOptions()
+                    .position(LatLng(markerData.latitude, markerData.longitude))
+                    .title(markerData.title)
+                    .snippet(markerData.snippet)
+                googleMap.addMarker(markerOptions)
 
-            boundsBuilder.include(
-                LatLng(
-                    markerData.latitude,
-                    markerData.longitude
+                boundsBuilder.include(
+                    LatLng(
+                        markerData.latitude,
+                        markerData.longitude
+                    )
                 )
-            )
+
+            }
+
+
+
 
         }
 
@@ -159,7 +169,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         googleMap = gMap
     }
 
-    // Other methods in LocationFragment
+
 }
 
 
