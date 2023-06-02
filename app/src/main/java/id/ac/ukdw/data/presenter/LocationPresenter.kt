@@ -45,6 +45,7 @@ class LocationPresenter(private val view: LocationView) {
 
     private fun processMarkers(coordinat: List<Body>) {
         for (i in coordinat) {
+
             val marker = MarkerData(
                 i?.long?.toDouble() ?: 0.0,  // Provide default latitude if i or i.long is null
                 i?.lat?.toDouble() ?: 0.0,  // Provide default longitude if i or i.lat is null
@@ -59,6 +60,7 @@ class LocationPresenter(private val view: LocationView) {
             )
 
             markerList.add(marker)
+
         }
     }
 
