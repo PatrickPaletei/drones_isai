@@ -110,8 +110,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
                 namaLahanTextView.text = markerData.namaLahan
                 komoditasTextView.text = markerData.komoditas
                 tglSampelTextView.text = markerData.tglSampel
-                karbonTanahTextView.text = markerData.carbon_tanah
-                karbonTanamahTextView.text = markerData.carbon_tanah
+                karbonTanahTextView.text = markerData.karbonTanah
+                karbonTanamahTextView.text = markerData.karbonTanah
 
                 bottomSheetDialog.setContentView(view)
                 bottomSheetDialog.show()
