@@ -61,7 +61,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         for (markerData in markerList) {
             if (markerData.latitude != 0.0 && markerData.longitude != 0.0
                 && markerData.komoditas != "null" && markerData.namaLahan != "null"
-                && markerData.carbon_tanah != "null" && markerData.karbonTanaman != "null"
+                && markerData.karbonTanah != "null" && markerData.karbonTanaman != "null"
                 && markerData.KodeSampel != "null" && markerData.tglSampel != "null"
             ) {
                 val markerOptions = MarkerOptions()

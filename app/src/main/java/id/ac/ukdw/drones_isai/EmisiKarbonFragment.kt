@@ -1,36 +1,36 @@
 package id.ac.ukdw.drones_isai
 
-import android.graphics.Paint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
-import com.github.mikephil.charting.charts.CandleStickChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.data.CandleData
-import com.github.mikephil.charting.data.CandleDataSet
-import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import id.ac.ukdw.MainActivity
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
+import id.ac.ukdw.SharedViewModel
 import id.ac.ukdw.drones_isai.databinding.FragmentEmisiKarbonBinding
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 
 class EmisiKarbonFragment : Fragment() {
 
     private lateinit var binding: FragmentEmisiKarbonBinding
-
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val months = arrayOf(
         "Jan", "Feb", "Mar", "Apr", "May", "Jun",
         "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     )
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,175 +40,131 @@ class EmisiKarbonFragment : Fragment() {
         binding = FragmentEmisiKarbonBinding.inflate(inflater, container, false)
         val view = binding.root
 
+        sharedViewModel.data.observe(viewLifecycleOwner) { dataApi ->
+            // Handle the updated data here
+            Log.d("testVM", dataApi.toString())
 
-        setupCandlestickChart()
-        setupBarChart()
-        binding.fabZoom.setOnClickListener {
-            val newFragment = EmisiLandFragment()
-            val parentFragment = parentFragment
-            if (parentFragment is Fragment) {
-                parentFragment.parentFragmentManager.beginTransaction()
-                    .replace(R.id.nav_host_fragment, newFragment)
-                    .addToBackStack(null)
-                    .commit()
-                val mainActivity = activity as? MainActivity
-                mainActivity?.hideBottomNavigationView()
-            }
+            // Parse and populate data
+            val mapData = populateData(dataApi)
+
+            // Set up charts
+            setupBarChart(mapData)
         }
 
         return view
     }
 
-    private fun setupCandlestickChart() {
-        val candlestickChart: CandleStickChart = binding.candleChart
+    private fun populateData(dataApi: MutableMap<String, MutableList<String>>): Map<Int, MutableList<Float>> {
+        val mapData = mutableMapOf<Int, MutableList<Float>>()
 
-        // Candlestick Chart
-        val candleEntries = listOf(
-            CandleEntry(0f, 9f, 5f, 7f, 6f),
-            CandleEntry(1f, 4f, 3f, 6f, 5f),
-            CandleEntry(2f, 6f, 4f, 5f, 5.5f),
-            CandleEntry(3f, 8f, 6f, 7f, 7f),
-            CandleEntry(4f, 5f, 4f, 4.5f, 4.7f)
-        )
+        val data = dataApi
 
-        // Calculate y-axis range
-        val candleMin = candleEntries.minByOrNull { it.low }?.low ?: 0f
-        val candleMax = candleEntries.maxByOrNull { it.high }?.high ?: 10f
+        Log.d("ikan", data.toString())
+        for ((date, value) in data) {
+            for (index in value.indices) {
+                val values = value[index].split(" ").map { it.toFloat() }
 
-        // Fill missing data with empty entries
-//        val allCandleEntries = ArrayList<CandleEntry>()
-//        for (i in 0 until months.size) {
-//            val entry = if (i < candleEntries.size) candleEntries[i] else CandleEntry(
-//                i.toFloat(),
-//                0f,
-//                0f,
-//                0f,
-//                0f
-//            )
-//            allCandleEntries.add(entry)
-//        }
+                val calendar = Calendar.getInstance()
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+                val parsedDate = dateFormat.parse(date)
+                if (parsedDate != null) {
+                    calendar.time = parsedDate
+                    val month = calendar.get(Calendar.MONTH) + 1
 
-        val candleDataSet = CandleDataSet(candleEntries, "Candlestick Data")
-        candleDataSet.color = ContextCompat.getColor(
-            requireContext(),
-            R.color.blue
-        ) // Color for neutral (open = close)
-        candleDataSet.shadowColor =
-            ContextCompat.getColor(requireContext(), R.color.blue_light_2) // Color for shadow
-        candleDataSet.shadowWidth = 0.7f // Width of the shadow lines
-        candleDataSet.decreasingColor = ContextCompat.getColor(
-            requireContext(),
-            R.color.red_candle
-        ) // Color for decreasing (open > close)
-        candleDataSet.decreasingPaintStyle = Paint.Style.FILL // Style for decreasing candle bars
-        candleDataSet.increasingColor = ContextCompat.getColor(
-            requireContext(),
-            R.color.green
-        ) // Color for increasing (open < close)
-        candleDataSet.increasingPaintStyle = Paint.Style.FILL // Style for increasing candle bars
-        candleDataSet.neutralColor = ContextCompat.getColor(
-            requireContext(),
-            R.color.blue
-        ) // Color for neutral (open = close)
-        candleDataSet.valueTextSize = 10f // Text size for values displayed on the bars
-
-        val candleData = CandleData(candleDataSet)
-        candlestickChart.data = candleData
-
-        candlestickChart.legend.isEnabled = false
-        candlestickChart.description.isEnabled = false
-
-        // Animate the Candlestick Chart
-        candlestickChart.animateXY(1000, 1000)
-
-        val xAxisCandle = candlestickChart.xAxis
-        xAxisCandle.valueFormatter = IndexAxisValueFormatter(months)
-        xAxisCandle.position = XAxis.XAxisPosition.BOTTOM
-        xAxisCandle.setDrawGridLines(false)
-        xAxisCandle.granularity = 1f
-
-        candlestickChart.setVisibleXRangeMaximum(5f) // Set the visible range on the x-axis
-        candlestickChart.axisRight.isEnabled = false
-
-        val yAxisCandle = candlestickChart.axisLeft
-        yAxisCandle.axisMinimum = candleMin - 1f
-        yAxisCandle.axisMaximum = candleMax + 1f
-
-        candlestickChart.invalidate()
-    }
-
-    private fun setupBarChart() {
-        val barChart: BarChart = binding.barChart
-
-        // Bar Chart
-        val barEntries = listOf(
-            BarEntry(0f, 8f),
-            BarEntry(1f, 5f),
-            BarEntry(2f, 7f),
-            BarEntry(3f, 6f),
-            BarEntry(4f, 9f)
-        )
-
-        val dataSet1 = BarDataSet(barEntries, "Bar 1")
-        dataSet1.color = ContextCompat.getColor(requireContext(), R.color.blue)
-
-// Create a separate list of entries for dataSet2
-        val dataSet2Entries = listOf(
-            BarEntry(0f, 2f),
-            BarEntry(1f, 4f),
-            BarEntry(2f, 3f),
-            BarEntry(3f, 2f),
-            BarEntry(4f, 6f)
-        )
-        val dataSet2 = BarDataSet(dataSet2Entries, "Bar 2")
-        dataSet2.color = ContextCompat.getColor(requireContext(), R.color.blue_light)
-        // Create a separate list of entries for dataSet3
-        val dataSet3Entries = listOf(
-            BarEntry(0f, 4f),
-            BarEntry(1f, 3f),
-            BarEntry(2f, 6f),
-            BarEntry(3f, 4f),
-            BarEntry(4f, 3f)
-        )
-        val dataSet3 = BarDataSet(dataSet3Entries, "Bar 3")
-        dataSet3.color = ContextCompat.getColor(requireContext(), R.color.blue_light_2)
-
-        val barData = BarData(dataSet1, dataSet2, dataSet3)
-
-
-
-// Set the x-axis labels for all 12 months
-        val xAxisLabels = ArrayList<String>()
-        for (i in months.indices) {
-            val label = if (i < barEntries.size) months[i] else ""
-            xAxisLabels.add(label)
+                    if (mapData.containsKey(month)) {
+                        mapData[month]?.addAll(values)
+                    } else {
+                        mapData[month] = values.toMutableList()
+                    }
+                }
+            }
         }
 
-        barData.barWidth = 0.35f
-        barChart.data = barData
-
-// Configure other properties of the bar chart as needed
-        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels.toTypedArray())
-        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-//        barChart.xAxis.setDrawGridLines(false)
-        barChart.xAxis.granularity = 1f
-        barChart.xAxis.spaceMin = 0.5f // Set the minimum spacing between labels
-        barChart.xAxis.spaceMax = 0.5f // Set the maximum spacing between labels
-        barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
-        barChart.description.isEnabled = false
-        barChart.legend.isEnabled = false
-        barChart.groupBars(-0.3f, 0.15f, 0.04f) // Adjust the spacing between groups and bars
-
-
-// Set the range for the y-axis
-        val yAxis = barChart.axisLeft
-        yAxis.axisMinimum = 0f
-
-        // Disable the y-axis on the right side
-        barChart.axisRight.isEnabled = false
-
-        barChart.invalidate()
+        for ((month, values) in mapData) {
+            Log.d("dataPair", "$month: $values")
+        }
+        Log.d("mapData", mapData.toString())
+        return mapData
     }
+
+
+
+
+    private fun setupBarChart(mapData: Map<Int, List<Float>>) {
+        val barChart: BarChart = binding.barChart
+
+        val sortedData = mapData.toSortedMap(compareBy { it })
+
+        val barEntries1 = mutableListOf<BarEntry>()
+        val barEntries2 = mutableListOf<BarEntry>()
+        val barEntries3 = mutableListOf<BarEntry>()
+        val xAxisLabels = mutableListOf<String>()
+        val barColors = mutableListOf<Int>()
+        var barIndex = 0f
+        val groupSpace = 0.12f // Adjust the spacing between groups
+        val barWidth = 0.3f // Adjust the width of the bars
+
+        for ((month, values) in sortedData) {
+            val valueArray = values.toString().split(" ")
+            if (valueArray.size == 3) {
+                val entry1 = BarEntry(barIndex, valueArray[0].toFloat())
+                val entry2 = BarEntry(barIndex, valueArray[1].toFloat())
+                val entry3 = BarEntry(barIndex, valueArray[2].toFloat())
+
+                barEntries1.add(entry1)
+                barEntries2.add(entry2)
+                barEntries3.add(entry3)
+
+                xAxisLabels.add(month.toString())
+                barIndex += 1f
+            }
+        }
+
+        val dataSetList = mutableListOf<BarDataSet>()
+        val colorArray = arrayOf(R.color.blue, R.color.green, R.color.red_candle)
+        val entriesList = listOf(barEntries1, barEntries2, barEntries3)
+
+        for (i in entriesList.indices) {
+            val entries = entriesList[i]
+            val dataSet = BarDataSet(entries, "Bar ${i + 1}")
+            dataSet.color = ContextCompat.getColor(requireContext(), colorArray[i])
+            dataSetList.add(dataSet)
+        }
+
+        if (dataSetList.size >= 2) {
+            val barData = BarData(dataSetList as List<IBarDataSet>?)
+            barData.barWidth = barWidth
+
+            barChart.data = barData
+
+            // Configure other properties of the bar chart as needed
+            barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels.toTypedArray())
+            barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+            barChart.xAxis.granularity = 1f
+            barChart.xAxis.spaceMin = 0.5f // Set the minimum spacing between labels
+            barChart.xAxis.spaceMax = 0.5f // Set the maximum spacing between labels
+            barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
+            barChart.description.isEnabled = false
+            barChart.legend.isEnabled = false
+            // Disable the y-axis on the right side
+            barChart.axisRight.isEnabled = false
+
+            // Calculate the total width of the groups
+            val groupCount = entriesList.size
+            val groupWidth = barData.barWidth * groupCount + groupSpace * (groupCount - 1)
+
+            // Calculate the left offset to align the bars to the left side
+            val startOffset = -groupWidth / 2
+
+            // Group the bars and adjust spacing
+            barChart.groupBars(0f, groupSpace, startOffset)
+            barChart.invalidate()
+        } else {
+            Log.d("error bar", dataSetList.toString())
+        }
+    }
+
+
 
 
 }

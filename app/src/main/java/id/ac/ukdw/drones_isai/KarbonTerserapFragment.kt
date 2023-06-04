@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.CandleStickChart
@@ -21,9 +22,7 @@ import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.formatter.ValueFormatter
-import id.ac.ukdw.MainActivity
-import id.ac.ukdw.data.AppendedData
+import id.ac.ukdw.SharedViewModel
 import id.ac.ukdw.data.apiHelper.ApiClient
 import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.data.model.GetMapsResponse
@@ -32,7 +31,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
-import java.time.LocalDate
 import java.util.Calendar
 import java.util.Locale
 
@@ -40,8 +38,7 @@ class KarbonTerserapFragment : Fragment() {
 
     private lateinit var binding: FragmentKarbonTerserapBinding
     private val dataCache: HashMap<String, List<Body>> = HashMap()
-
-
+    private val sharedViewModel: SharedViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,24 +52,18 @@ class KarbonTerserapFragment : Fragment() {
         if (cachedData != null) {
             setupBarChart(cachedData)
             setupCandlestickChart(cachedData)
+
         } else {
             callApi()
         }
 
-        binding.fabZoom.setOnClickListener {
-            val newFragment = TerserapLandFragment()
-            val parentFragment = parentFragment
-            if (parentFragment is Fragment) {
-                parentFragment.parentFragmentManager.beginTransaction()
-                    .replace(R.id.nav_host_fragment, newFragment)
-                    .addToBackStack(null)
-                    .commit()
-                val mainActivity = activity as? MainActivity
-                mainActivity?.hideBottomNavigationView()
-            }
-        }
         return view
     }
+
+    private fun sendData(body: MutableMap<String, MutableList<String>>) {
+        sharedViewModel.setData(body)
+    }
+
 
     private fun callApi() {
         ApiClient.instance.getMaps().enqueue(object : Callback<GetMapsResponse> {
@@ -88,17 +79,38 @@ class KarbonTerserapFragment : Fragment() {
                         dataCache[CACHE_KEY] = responseData
                         setupBarChart(responseData)
                         setupCandlestickChart(responseData)
+                        val map: MutableMap<String, MutableList<String>> = mutableMapOf()
+                        for (i in responseData) {
+                            val emisiTanaman = i.emisiTanaman
+                            val emisiTanah = i.emisiTanah
+                            val emisiLingkungan = i.emisiLingkungan
+                            val date = i.date
+
+                            if (map.containsKey(date)) {
+                                // If the key exists, append the value to the existing list
+                                map[date]?.apply {
+                                    add("$emisiTanaman $emisiTanah $emisiLingkungan")
+                                }
+                            } else {
+                                // If the key doesn't exist, create a new list and add the value
+                                val newList = mutableListOf("$emisiTanaman $emisiTanah $emisiLingkungan")
+                                map[date] = newList
+                            }
+                        }
+
+                        sendData(map)
                     }
                 }
             }
 
             override fun onFailure(call: Call<GetMapsResponse>, t: Throwable) {
-                // Handle failure
+                Log.d("nodata", "onFailure: " + t.message)
             }
         })
     }
 
-    fun populateData(body: List<Body>): MutableMap<Int, MutableList<String>> {
+
+    private fun populateData(body: List<Body>): MutableMap<Int, MutableList<String>> {
         val mapData = mutableMapOf<Int, MutableList<String>>()
 
         for (item in body) {
@@ -127,9 +139,14 @@ class KarbonTerserapFragment : Fragment() {
         }
 
         if (body.isEmpty()) {
-            // Handle the case when there is no data available
+            Log.d("noData", "body is empty")
         }
         return mapData
+    }
+    companion object {
+        private const val CACHE_KEY = "karbon_terserap_fragment_cache"
+
+
     }
 
     private fun setupCandlestickChart(body: List<Body>) {
@@ -287,7 +304,5 @@ class KarbonTerserapFragment : Fragment() {
         barChart.invalidate()
     }
 
-    companion object {
-        private const val CACHE_KEY = "karbon_terserap_fragment_cache"
-    }
+
 }
