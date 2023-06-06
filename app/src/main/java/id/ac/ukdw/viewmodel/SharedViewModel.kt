@@ -1,4 +1,4 @@
-package id.ac.ukdw
+package id.ac.ukdw.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

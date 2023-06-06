@@ -5,6 +5,9 @@ import android.util.Log
 import id.ac.ukdw.data.apiHelper.ApiClient
 import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.data.model.GetMapsResponse
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -14,33 +17,41 @@ class LocationPresenter(private val view: LocationView) {
     private val markerList = mutableListOf<MarkerData>()
     private var dataLoaded = false
 
+
+    private var isLoading = false
+
     fun loadData() {
-        ApiClient.instance.getMaps().enqueue(object : Callback<GetMapsResponse> {
-            override fun onResponse(
-                call: Call<GetMapsResponse>,
-                response: Response<GetMapsResponse>
-            ) {
-                val code = response.code()
-                val body = response.body()
-                Log.d("dataBody", "response: " + body.toString())
-                if (code == 200) {
+        if (isLoading) return // Skip if data is already being loaded
+
+        isLoading = true
+
+
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val response = ApiClient.instance.getMaps()
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    Log.d("dataBody", "response: " + body.toString())
                     if (body != null) {
                         val coordinat = body.body
                         processMarkers(coordinat)
                     }
+                    dataLoaded = true
+                } else {
+                    Log.d("nodata", "Error: ${response.code()}")
+                    dataLoaded = false
                 }
-                dataLoaded = true
-                checkDataAndMapReady()
-
-            }
-
-            override fun onFailure(call: Call<GetMapsResponse>, t: Throwable) {
-                Log.d("nodata", "onFailure: " + t.message)
+            } catch (e: Exception) {
+                Log.d("nodata", "Error: ${e.message}")
                 dataLoaded = false
-                checkDataAndMapReady()
             }
-        })
+
+            isLoading = false
+
+            checkDataAndMapReady()
+        }
     }
+
 
     private fun processMarkers(coordinat: List<Body>) {
         for (i in coordinat) {

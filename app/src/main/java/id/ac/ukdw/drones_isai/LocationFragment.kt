@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 
 import id.ac.ukdw.data.presenter.LocationPresenter
 import id.ac.ukdw.data.presenter.LocationView
+import id.ac.ukdw.drones_isai.databinding.FragmentLocationBinding
 
 
 class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
@@ -28,22 +29,25 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
     private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
 
+    private var _binding: FragmentLocationBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_location, container, false)
+        _binding = FragmentLocationBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         presenter = LocationPresenter(this)
-
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        setupSearchView(view)
+        setupSearchView()
 
         presenter.loadData()
     }
@@ -144,10 +148,12 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
     }
 
 
+
+
     // Other methods in LocationFragment
 
-    private fun setupSearchView(view: View) {
-        searchView = view.findViewById(R.id.searchView)
+    private fun setupSearchView() {
+        searchView = binding.searchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 presenter.searchMarkers(query)
@@ -166,6 +172,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
     override fun onMapReady(gMap: GoogleMap) {
         googleMap = gMap
     }
+
 
 
 }

@@ -1,5 +1,6 @@
 package id.ac.ukdw.drones_isai
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.charts.CandleStickChart
@@ -22,11 +24,12 @@ import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import id.ac.ukdw.SharedViewModel
+import id.ac.ukdw.viewmodel.SharedViewModel
 import id.ac.ukdw.data.apiHelper.ApiClient
 import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.data.model.GetMapsResponse
 import id.ac.ukdw.drones_isai.databinding.FragmentKarbonTerserapBinding
+import id.ac.ukdw.viewmodel.MainViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,7 +42,9 @@ class KarbonTerserapFragment : Fragment() {
     private lateinit var binding: FragmentKarbonTerserapBinding
     private val dataCache: HashMap<String, List<Body>> = HashMap()
     private val sharedViewModel: SharedViewModel by activityViewModels()
+    private val viewModel: MainViewModel by viewModels()
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -54,61 +59,35 @@ class KarbonTerserapFragment : Fragment() {
             setupCandlestickChart(cachedData)
 
         } else {
-            callApi()
+            binding.loadCandle.visibility = View.VISIBLE
+            binding.laodBar.visibility=View.VISIBLE
+            viewModel.fetchData()
+        }
+        // Observe the view model's LiveData for changes
+        viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
+            if (responseData != null) {
+                setupBarChart(responseData)
+                setupCandlestickChart(responseData)
+                binding.loadCandle.visibility = View.GONE
+                binding.laodBar.visibility=View.GONE
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            if (errorMessage != null) {
+                // Handle the error message, e.g., display it to the user
+                binding.laodBar.visibility=View.GONE
+                binding.noDataBar.text = "Tidak Ada Data Untuk Ditampilkan"
+                binding.noDataCandle.text = "Tidak Ada Data Untuk Ditampilkan"
+            }
         }
 
         return view
     }
 
-    private fun sendData(body: MutableMap<String, MutableList<String>>) {
-        sharedViewModel.setData(body)
-    }
-
-
-    private fun callApi() {
-        ApiClient.instance.getMaps().enqueue(object : Callback<GetMapsResponse> {
-            override fun onResponse(
-                call: Call<GetMapsResponse>,
-                response: Response<GetMapsResponse>
-            ) {
-                val statusCode = response.code()
-                val body = response.body()
-                if (statusCode == 200) {
-                    if (body != null) {
-                        val responseData = body.body
-                        dataCache[CACHE_KEY] = responseData
-                        setupBarChart(responseData)
-                        setupCandlestickChart(responseData)
-                        val map: MutableMap<String, MutableList<String>> = mutableMapOf()
-                        for (i in responseData) {
-                            val emisiTanaman = i.emisiTanaman
-                            val emisiTanah = i.emisiTanah
-                            val emisiLingkungan = i.emisiLingkungan
-                            val date = i.date
-
-                            if (map.containsKey(date)) {
-                                // If the key exists, append the value to the existing list
-                                map[date]?.apply {
-                                    add("$emisiTanaman $emisiTanah $emisiLingkungan")
-                                }
-                            } else {
-                                // If the key doesn't exist, create a new list and add the value
-                                val newList = mutableListOf("$emisiTanaman $emisiTanah $emisiLingkungan")
-                                map[date] = newList
-                            }
-                        }
-
-                        sendData(map)
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<GetMapsResponse>, t: Throwable) {
-                Log.d("nodata", "onFailure: " + t.message)
-            }
-        })
-    }
-
+//    private fun sendData(body: MutableMap<String, MutableList<String>>) {
+//        sharedViewModel.setData(body)
+//    }
 
     private fun populateData(body: List<Body>): MutableMap<Int, MutableList<String>> {
         val mapData = mutableMapOf<Int, MutableList<String>>()
@@ -143,12 +122,6 @@ class KarbonTerserapFragment : Fragment() {
         }
         return mapData
     }
-    companion object {
-        private const val CACHE_KEY = "karbon_terserap_fragment_cache"
-
-
-    }
-
     private fun setupCandlestickChart(body: List<Body>) {
         val candlestickChart: CandleStickChart = binding.candleChart
 
@@ -246,18 +219,32 @@ class KarbonTerserapFragment : Fragment() {
         val barWidth = 0.3f // Adjust the width of the bars
 
         for ((month, values) in sortedData) {
+            var sumValue1 = 0f
+            var sumValue2 = 0f
+            var count = 0
+
             for (value in values) {
                 val valueArray = value.split(" ")
                 if (valueArray.size == 2) {
-                    val entry1 = BarEntry(barIndex, valueArray[0].toFloat())
-                    val entry2 = BarEntry(barIndex, valueArray[1].toFloat())
-                    barEntries1.add(entry1)
-                    barEntries2.add(entry2)
-                    xAxisLabels.add(month.toString())
-                    barIndex += 1f
+                    sumValue1 += valueArray[0].toFloat()
+                    sumValue2 += valueArray[1].toFloat()
+                    count++
                 }
             }
+
+            if (count > 0) {
+                val averageValue1 = sumValue1 / count
+                val averageValue2 = sumValue2 / count
+
+                val entry1 = BarEntry(barIndex, averageValue1)
+                val entry2 = BarEntry(barIndex, averageValue2)
+                barEntries1.add(entry1)
+                barEntries2.add(entry2)
+                xAxisLabels.add(month.toString())
+                barIndex += 1f
+            }
         }
+
 
         val dataSet1 = BarDataSet(barEntries1, "Bar 1")
         dataSet1.color = ContextCompat.getColor(requireContext(), R.color.blue)
@@ -292,7 +279,7 @@ class KarbonTerserapFragment : Fragment() {
         val startOffset = -groupWidth / 2
 
         // Group the bars and adjust spacing
-        barChart.groupBars(0f, 0.1f, 0.1f)
+        barChart.groupBars(0f, 0.08f, 0f)
 
         // Adjust the range of the Y-axis to accommodate the data
         val minValue = minOf(barEntries1.minByOrNull { it.y }?.y ?: 0f, barEntries2.minByOrNull { it.y }?.y ?: 0f)
@@ -303,6 +290,10 @@ class KarbonTerserapFragment : Fragment() {
         barChart.notifyDataSetChanged()
         barChart.invalidate()
     }
+    companion object {
+        private const val CACHE_KEY = "karbon_terserap_fragment_cache"
 
+
+    }
 
 }
