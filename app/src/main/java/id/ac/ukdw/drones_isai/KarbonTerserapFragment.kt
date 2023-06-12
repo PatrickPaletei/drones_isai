@@ -85,9 +85,7 @@ class KarbonTerserapFragment : Fragment() {
         return view
     }
 
-//    private fun sendData(body: MutableMap<String, MutableList<String>>) {
-//        sharedViewModel.setData(body)
-//    }
+
 
     private fun populateData(body: List<Body>): MutableMap<Int, MutableList<String>> {
         val mapData = mutableMapOf<Int, MutableList<String>>()
@@ -252,7 +250,7 @@ class KarbonTerserapFragment : Fragment() {
 
         val dataSet2 = BarDataSet(barEntries2, "Bar 2")
         dataSet2.color = ContextCompat.getColor(requireContext(), R.color.green)
-        dataSet1.setDrawValues(true)
+        dataSet2.setDrawValues(true)
 
         val barData = BarData(dataSet1, dataSet2)
         barData.barWidth = barWidth

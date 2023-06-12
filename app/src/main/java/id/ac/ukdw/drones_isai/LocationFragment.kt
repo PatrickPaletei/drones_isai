@@ -50,12 +50,21 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         setupSearchView()
 
         presenter.loadData()
+        binding.switchMap.setOnClickListener {
+            if (googleMap.mapType == GoogleMap.MAP_TYPE_NORMAL) {
+                googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            } else {
+                googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+            }
+        }
     }
 
 
     // Implement LocationView interface methods
     override fun isMapReady(): Boolean {
+        googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
         return ::googleMap.isInitialized
+
     }
 
     override fun displayMarkers(markerList: List<MarkerData>) {
