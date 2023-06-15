@@ -5,7 +5,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import id.ac.ukdw.drones_isai.EmisiKarbonFragment
 import id.ac.ukdw.drones_isai.KarbonTerserapFragment
-import id.ac.ukdw.drones_isai.NilaiHSTFragment
+import id.ac.ukdw.drones_isai.NilaiAgregatFragment
 
 class ViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
@@ -13,7 +13,7 @@ class ViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_
         return when (position) {
             0 -> KarbonTerserapFragment()
             1 -> EmisiKarbonFragment()
-            2 -> NilaiHSTFragment()
+            2 -> NilaiAgregatFragment()
             else -> throw IllegalArgumentException("Invalid position: $position")
         }
     }

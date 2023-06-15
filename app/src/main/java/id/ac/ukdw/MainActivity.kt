@@ -6,11 +6,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import id.ac.ukdw.drones_isai.NilaiHSTFragment
 import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.helper.BottomNavigationHelper
 
-class MainActivity : AppCompatActivity(), NilaiHSTFragment.BottomNavigationViewListener {
+class MainActivity : AppCompatActivity() {
 
 
     private lateinit var navController: NavController
@@ -38,11 +37,6 @@ class MainActivity : AppCompatActivity(), NilaiHSTFragment.BottomNavigationViewL
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-    override fun hideBottomNavigationView() {
-        // Hide the bottom navigation view here
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.visibility = View.GONE
-    }
 
     fun showBottomNavigationView() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)

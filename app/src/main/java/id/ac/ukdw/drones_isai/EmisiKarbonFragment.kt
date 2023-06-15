@@ -20,22 +20,19 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.viewmodel.SharedViewModel
 import id.ac.ukdw.drones_isai.databinding.FragmentEmisiKarbonBinding
+import id.ac.ukdw.helper.DataExportable
 import id.ac.ukdw.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 
-class EmisiKarbonFragment : Fragment() {
+class EmisiKarbonFragment : Fragment(), DataExportable {
 
     private lateinit var binding: FragmentEmisiKarbonBinding
-    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val dataCache: HashMap<String, List<Body>> = HashMap()
     private val viewModel: MainViewModel by viewModels()
-    private val months = arrayOf(
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    )
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -119,7 +116,7 @@ class EmisiKarbonFragment : Fragment() {
         val xAxisLabels = mutableListOf<String>()
         var barIndex = 0f
         val groupSpace = 0.12f // Adjust the spacing between groups
-        val barWidth = 0.25f // Adjust the width of the bars
+        val barWidth = 0.24f // Adjust the width of the bars
 
         for ((month, values) in sortedData) {
             var sumValue1 = 0f
@@ -158,11 +155,11 @@ class EmisiKarbonFragment : Fragment() {
         dataSet1.setDrawValues(true)
 
         val dataSet2 = BarDataSet(barEntries2, "Bar 2")
-        dataSet2.color = ContextCompat.getColor(requireContext(), R.color.green)
+        dataSet2.color = ContextCompat.getColor(requireContext(), R.color.blue_light)
         dataSet2.setDrawValues(true)
 
         val dataSet3 = BarDataSet(barEntries3, "Bar 3")
-        dataSet3.color = ContextCompat.getColor(requireContext(), R.color.red_candle)
+        dataSet3.color = ContextCompat.getColor(requireContext(), R.color.blue_light_2)
         dataSet3.setDrawValues(true)
 
         val barData = BarData(dataSet1, dataSet2,dataSet3)
@@ -198,14 +195,20 @@ class EmisiKarbonFragment : Fragment() {
         barChart.axisLeft.axisMinimum = minValue - 10
         barChart.axisLeft.axisMaximum = maxValue + 10
 
+        barChart.setScaleEnabled(true)
+        barChart.setPinchZoom(true)
+        barChart.setVisibleXRangeMaximum(10F)
         barChart.notifyDataSetChanged()
         barChart.invalidate()
     }
 
+    override fun getData(): String  {
+        val cachedData = dataCache[CACHE_KEY]
+        return cachedData.toString() ?: "No Data on Fragment 2"
+    }
+
     companion object {
         private const val CACHE_KEY = "karbon_terserap_fragment_cache"
-
-
     }
 
 

@@ -1,9 +1,12 @@
 package id.ac.ukdw.drones_isai
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,20 +27,30 @@ import com.github.mikephil.charting.data.CandleData
 import com.github.mikephil.charting.data.CandleDataSet
 import com.github.mikephil.charting.data.CandleEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.itextpdf.text.Document
+import com.itextpdf.text.Element
+import com.itextpdf.text.Image
+import com.itextpdf.text.Paragraph
+import com.itextpdf.text.pdf.PdfPTable
+import com.itextpdf.text.pdf.PdfWriter
 import id.ac.ukdw.viewmodel.SharedViewModel
 import id.ac.ukdw.data.apiHelper.ApiClient
 import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.data.model.GetMapsResponse
 import id.ac.ukdw.drones_isai.databinding.FragmentKarbonTerserapBinding
+import id.ac.ukdw.helper.DataExportable
 import id.ac.ukdw.viewmodel.MainViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class KarbonTerserapFragment : Fragment() {
+class KarbonTerserapFragment : Fragment(), DataExportable {
 
     private lateinit var binding: FragmentKarbonTerserapBinding
     private val dataCache: HashMap<String, List<Body>> = HashMap()
@@ -56,36 +69,31 @@ class KarbonTerserapFragment : Fragment() {
         val cachedData = dataCache[CACHE_KEY]
         if (cachedData != null) {
             setupBarChart(cachedData)
-            setupCandlestickChart(cachedData)
-
         } else {
-            binding.loadCandle.visibility = View.VISIBLE
-            binding.laodBar.visibility=View.VISIBLE
+
+            binding.laodBar.visibility = View.VISIBLE
             viewModel.fetchData()
         }
         // Observe the view model's LiveData for changes
         viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
             if (responseData != null) {
                 setupBarChart(responseData)
-                setupCandlestickChart(responseData)
-                binding.loadCandle.visibility = View.GONE
-                binding.laodBar.visibility=View.GONE
+
+                binding.laodBar.visibility = View.GONE
             }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             if (errorMessage != null) {
                 // Handle the error message, e.g., display it to the user
-                binding.laodBar.visibility=View.GONE
+                binding.laodBar.visibility = View.GONE
                 binding.noDataBar.text = "Tidak Ada Data Untuk Ditampilkan"
-                binding.noDataCandle.text = "Tidak Ada Data Untuk Ditampilkan"
             }
         }
 
+
         return view
     }
-
-
 
     private fun populateData(body: List<Body>): MutableMap<Int, MutableList<String>> {
         val mapData = mutableMapOf<Int, MutableList<String>>()
@@ -119,87 +127,6 @@ class KarbonTerserapFragment : Fragment() {
             Log.d("noData", "body is empty")
         }
         return mapData
-    }
-    private fun setupCandlestickChart(body: List<Body>) {
-        val candlestickChart: CandleStickChart = binding.candleChart
-
-        val candleEntries = mutableListOf<CandleEntry>()
-        val xAxisLabels = mutableListOf<String>()
-        var entryIndex = 0f
-
-        val mapData = populateData(body)
-
-        val sortedKeys = mapData.keys.sorted()
-
-        for (month in sortedKeys) {
-            val values = mapData[month]
-
-            val lowest = values?.minByOrNull { value ->
-                val valueArray = value.split(" ")
-                if (valueArray.size == 2) {
-                    valueArray[0].toFloat()
-                } else {
-                    Float.MAX_VALUE
-                }
-            }?.let {
-                val valueArray = it.split(" ")
-                valueArray[0].toFloat()
-            } ?: 0f
-
-            val highest = values?.maxByOrNull { value ->
-                val valueArray = value.split(" ")
-                if (valueArray.size == 2) {
-                    valueArray[1].toFloat()
-                } else {
-                    Float.MIN_VALUE
-                }
-            }?.let {
-                val valueArray = it.split(" ")
-                valueArray[1].toFloat()
-            } ?: 0f
-
-            val entry = CandleEntry(entryIndex, highest, lowest, highest, lowest)
-            candleEntries.add(entry)
-            xAxisLabels.add(month.toString())
-            entryIndex += 1f
-        }
-
-        val candleDataSet = CandleDataSet(candleEntries, "Candlestick Data")
-        candleDataSet.setDrawIcons(false)
-        candleDataSet.axisDependency = YAxis.AxisDependency.LEFT
-        candleDataSet.shadowColor = Color.DKGRAY
-        candleDataSet.shadowWidth = 0.7f
-        candleDataSet.decreasingColor = Color.RED
-        candleDataSet.decreasingPaintStyle = Paint.Style.FILL
-        candleDataSet.increasingColor = Color.GREEN
-        candleDataSet.increasingPaintStyle = Paint.Style.FILL
-        candleDataSet.neutralColor = Color.BLUE
-        candleDataSet.valueTextSize = 10f
-        candleDataSet.setDrawValues(true) // Enable value display on candles
-
-        val candleData = CandleData(candleDataSet)
-        candlestickChart.data = candleData
-
-        candlestickChart.legend.isEnabled = false
-        candlestickChart.description.isEnabled = false
-
-        // Animate the Candlestick Chart
-        candlestickChart.animateXY(1000, 1000)
-
-        val xAxisCandle = candlestickChart.xAxis
-        xAxisCandle.valueFormatter = IndexAxisValueFormatter(xAxisLabels.toTypedArray())
-        xAxisCandle.position = XAxis.XAxisPosition.BOTTOM
-        xAxisCandle.setDrawGridLines(false)
-        xAxisCandle.granularity = 1f
-
-        candlestickChart.setVisibleXRangeMaximum(candleEntries.size.toFloat()) // Set the visible range on the x-axis
-        candlestickChart.axisRight.isEnabled = false
-
-        val yAxisCandle = candlestickChart.axisLeft
-        yAxisCandle.axisMinimum = candleEntries.minByOrNull { it.low }?.low ?: 0f
-        yAxisCandle.axisMaximum = candleEntries.maxByOrNull { it.high }?.high ?: 10f
-
-        candlestickChart.invalidate()
     }
 
     private fun setupBarChart(body: List<Body>) {
@@ -249,7 +176,7 @@ class KarbonTerserapFragment : Fragment() {
         dataSet1.setDrawValues(true)
 
         val dataSet2 = BarDataSet(barEntries2, "Bar 2")
-        dataSet2.color = ContextCompat.getColor(requireContext(), R.color.green)
+        dataSet2.color = ContextCompat.getColor(requireContext(), R.color.blue_light)
         dataSet2.setDrawValues(true)
 
         val barData = BarData(dataSet1, dataSet2)
@@ -270,7 +197,8 @@ class KarbonTerserapFragment : Fragment() {
         barChart.axisRight.isEnabled = false
 
         // Calculate the total width of the groups
-        val groupCount = barEntries1.size // Assumes both barEntries1 and barEntries2 have the same size
+        val groupCount =
+            barEntries1.size // Assumes both barEntries1 and barEntries2 have the same size
         val groupWidth = barData.barWidth * groupCount + groupSpace * (groupCount - 1)
 
         // Calculate the left offset to align the bars to the left side
@@ -280,17 +208,34 @@ class KarbonTerserapFragment : Fragment() {
         barChart.groupBars(0f, 0.08f, 0f)
 
         // Adjust the range of the Y-axis to accommodate the data
-        val minValue = minOf(barEntries1.minByOrNull { it.y }?.y ?: 0f, barEntries2.minByOrNull { it.y }?.y ?: 0f)
-        val maxValue = maxOf(barEntries1.maxByOrNull { it.y }?.y ?: 0f, barEntries2.maxByOrNull { it.y }?.y ?: 0f)
+        val minValue = minOf(barEntries1.minByOrNull { it.y }?.y ?: 0f,
+            barEntries2.minByOrNull { it.y }?.y ?: 0f
+        )
+        val maxValue = maxOf(barEntries1.maxByOrNull { it.y }?.y ?: 0f,
+            barEntries2.maxByOrNull { it.y }?.y ?: 0f
+        )
         barChart.axisLeft.axisMinimum = minValue - 10
         barChart.axisLeft.axisMaximum = maxValue + 10
 
         barChart.notifyDataSetChanged()
         barChart.invalidate()
     }
+
+
+    override fun getData(): String  {
+        var data  = ""
+        viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
+            if (responseData != null) {
+                data = responseData.toString()
+
+            }
+        }
+        return data ?: "No Data on Fragment 1"
+    }
+
+
     companion object {
         private const val CACHE_KEY = "karbon_terserap_fragment_cache"
-
 
     }
 
