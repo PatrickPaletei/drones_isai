@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -55,18 +56,23 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent" />
 
-                            <ProgressBar
-                                android:id="@+id/laodBar"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center" />
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/loadBar"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:layout_gravity="center"
+                                app:lottie_autoPlay="true"
+                                app:lottie_loop="true"
+                                app:lottie_rawRes="@raw/loading_small" />
+
                             <TextView
                                 android:id="@+id/noDataBar"
-                                android:layout_margin="20dp"
-                                android:layout_gravity="center"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                />
+                                android:layout_gravity="center"
+                                android:layout_margin="20dp"
+                                android:textAlignment="center" />
                         </FrameLayout>
                     </LinearLayout>
 

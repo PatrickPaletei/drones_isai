@@ -26,7 +26,7 @@ class ViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_
         return when (position) {
             0 -> "Karbon Terserap"
             1 -> "Emisi Karbon"
-            2 -> "Nilai HST"
+            2 -> "Nilai Agregat"
             else -> null
         }
     }

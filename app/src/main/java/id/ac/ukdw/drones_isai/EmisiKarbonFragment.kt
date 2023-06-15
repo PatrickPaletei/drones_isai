@@ -1,5 +1,7 @@
 package id.ac.ukdw.drones_isai
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.BarChart
@@ -16,23 +17,22 @@ import com.github.mikephil.charting.data.BarData
 import com.github.mikephil.charting.data.BarDataSet
 import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet
 import id.ac.ukdw.data.model.Body
-import id.ac.ukdw.viewmodel.SharedViewModel
 import id.ac.ukdw.drones_isai.databinding.FragmentEmisiKarbonBinding
 import id.ac.ukdw.helper.DataExportable
+import id.ac.ukdw.helper.TableBuilder
 import id.ac.ukdw.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 
-class EmisiKarbonFragment : Fragment(), DataExportable {
+class EmisiKarbonFragment : Fragment(), DataExportable{
 
     private lateinit var binding: FragmentEmisiKarbonBinding
     private val dataCache: HashMap<String, List<Body>> = HashMap()
     private val viewModel: MainViewModel by viewModels()
-
+    private var renderedTable: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,21 +45,28 @@ class EmisiKarbonFragment : Fragment(), DataExportable {
         val cachedData = dataCache[CACHE_KEY]
         if (cachedData != null) {
             setupBarChart(cachedData)
-
+            binding.barChart.visibility =View.VISIBLE
         } else {
+            binding.laodBar.visibility = View.VISIBLE
+            binding.barChart.visibility =View.GONE
             viewModel.fetchData()
         }
         // Observe the view model's LiveData for changes
         viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
             if (responseData != null) {
                 setupBarChart(responseData)
+                binding.barChart.visibility =View.VISIBLE
+                binding.laodBar.visibility = View.GONE
+            }else{
+                binding.barChart.visibility =View.GONE
             }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             if (errorMessage != null) {
                 // Handle the error message, e.g., display it to the user
-
+                binding.laodBar.visibility = View.GONE
+                binding.noDataBar.text = "Tidak Ada Data Untuk Ditampilkan"
             }
         }
 
@@ -70,8 +77,8 @@ class EmisiKarbonFragment : Fragment(), DataExportable {
         val mapData = mutableMapOf<Int, MutableList<String>>()
 
         for (item in body) {
-            val emisiTanaman = item.carbonTanaman
-            val emisiTanah = item.carbonTanah
+            val emisiTanaman = item.emisiTanaman
+            val emisiTanah = item.emisiTanah
             val emisiLingkungan = item.emisiLingkungan
             val date = item.date
 
@@ -114,9 +121,13 @@ class EmisiKarbonFragment : Fragment(), DataExportable {
         val barEntries2 = mutableListOf<BarEntry>()
         val barEntries3 = mutableListOf<BarEntry>()
         val xAxisLabels = mutableListOf<String>()
+        val xAxisLabelsMonths = mutableListOf<String>()
         var barIndex = 0f
-        val groupSpace = 0.12f // Adjust the spacing between groups
-        val barWidth = 0.24f // Adjust the width of the bars
+        val barWidth = 0.28f // Adjust the width of the bars
+        val monthNames = arrayOf(
+            "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+            "Jul", "Aug", "Sep", "Okt", "Nov", "Des"
+        )
 
         for ((month, values) in sortedData) {
             var sumValue1 = 0f
@@ -146,9 +157,12 @@ class EmisiKarbonFragment : Fragment(), DataExportable {
                 barEntries2.add(entry2)
                 barEntries3.add(entry3)
                 xAxisLabels.add(month.toString())
+                val monthName = monthNames[month - 1]
+                xAxisLabelsMonths.add(monthName)
                 barIndex += 1f
             }
         }
+
 
         val dataSet1 = BarDataSet(barEntries1, "Bar 1")
         dataSet1.color = ContextCompat.getColor(requireContext(), R.color.blue)
@@ -168,47 +182,54 @@ class EmisiKarbonFragment : Fragment(), DataExportable {
         barChart.data = barData
 
         // Configure other properties of the bar chart as needed
-        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabels.toTypedArray())
+        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabelsMonths.toTypedArray())
         barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
         barChart.xAxis.granularity = 1f
-        barChart.xAxis.spaceMin = 0.5f // Set the minimum spacing between labels
-        barChart.xAxis.spaceMax = 0.5f // Set the maximum spacing between labels
         barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
         barChart.description.isEnabled = false
         barChart.legend.isEnabled = false
         // Disable the y-axis on the right side
         barChart.axisRight.isEnabled = false
 
-        // Calculate the total width of the groups
-        val groupCount = barEntries1.size // Assumes both barEntries1 and barEntries2 have the same size
-        val groupWidth = barData.barWidth * groupCount + groupSpace * (groupCount - 1)
-
-        // Calculate the left offset to align the bars to the left side
-        val startOffset = -groupWidth / 2
 
         // Group the bars and adjust spacing
-        barChart.groupBars(0f, 0.08f, 0f)
+        barChart.groupBars(-0.25f, 0.11f, 0f)
 
-        // Adjust the range of the Y-axis to accommodate the data
-        val minValue = minOf(barEntries1.minByOrNull { it.y }?.y ?: 0f, barEntries2.minByOrNull { it.y }?.y ?: 0f)
-        val maxValue = maxOf(barEntries1.maxByOrNull { it.y }?.y ?: 0f, barEntries2.maxByOrNull { it.y }?.y ?: 0f)
-        barChart.axisLeft.axisMinimum = minValue - 10
-        barChart.axisLeft.axisMaximum = maxValue + 10
-
-        barChart.setScaleEnabled(true)
-        barChart.setPinchZoom(true)
-        barChart.setVisibleXRangeMaximum(10F)
         barChart.notifyDataSetChanged()
         barChart.invalidate()
+
+        // make the table
+        val rowTemplate = "|  {label}  |  {value1}  |  {value2}  |  {value3}  |\n"
+        renderedTable = TableBuilder.buildTable(xAxisLabels, rowTemplate, barEntries1, barEntries2,barEntries3)
     }
 
-    override fun getData(): String  {
-        val cachedData = dataCache[CACHE_KEY]
-        return cachedData.toString() ?: "No Data on Fragment 2"
-    }
+
 
     companion object {
         private const val CACHE_KEY = "karbon_terserap_fragment_cache"
+    }
+
+    override fun getData(): String {
+        return renderedTable
+    }
+
+    override fun getScreen(): Bitmap? {
+        return (captureGraph())
+    }
+
+    private fun captureGraph(): Bitmap? {
+        val graphView = binding.barChart
+
+        // Create a bitmap with the same size as the graph view
+        val bitmap = Bitmap.createBitmap(graphView.width, graphView.height, Bitmap.Config.ARGB_8888)
+
+        // Create a canvas with the bitmap
+        val canvas = Canvas(bitmap)
+
+        // Draw the graph view onto the canvas
+        graphView.draw(canvas)
+
+        return bitmap
     }
 
 

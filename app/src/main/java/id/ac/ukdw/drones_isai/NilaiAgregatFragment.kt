@@ -1,37 +1,41 @@
 package id.ac.ukdw.drones_isai
 
-import android.graphics.Color
-import android.graphics.Paint
+import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.github.mikephil.charting.charts.CandleStickChart
+import com.github.mikephil.charting.animation.Easing
+import com.github.mikephil.charting.charts.BarChart
 import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.CandleData
-import com.github.mikephil.charting.data.CandleDataSet
-import com.github.mikephil.charting.data.CandleEntry
+import com.github.mikephil.charting.data.BarData
+import com.github.mikephil.charting.data.BarDataSet
+import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.drones_isai.databinding.FragmentNilaiHSTBinding
 import id.ac.ukdw.helper.DataExportable
+import id.ac.ukdw.helper.TableBuilder
 import id.ac.ukdw.viewmodel.MainViewModel
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
 
-class NilaiAgregatFragment : Fragment(),DataExportable {
+class NilaiAgregatFragment : Fragment(), DataExportable {
 
     private lateinit var binding: FragmentNilaiHSTBinding
     private val dataCache: HashMap<String, List<Body>> = HashMap()
     private val viewModel: MainViewModel by viewModels()
+    private var renderedTable: String = ""
 
-
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,28 +45,34 @@ class NilaiAgregatFragment : Fragment(),DataExportable {
         val view = binding.root
         val cachedData = dataCache[CACHE_KEY]
         if (cachedData != null) {
-            setupCandlestickChart(cachedData)
-
+            setupBarChart(cachedData)
+            binding.barChart.visibility =View.VISIBLE
         } else {
+            binding.loadBar.visibility = View.VISIBLE
+            binding.barChart.visibility =View.GONE
             viewModel.fetchData()
         }
         // Observe the view model's LiveData for changes
         viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
             if (responseData != null) {
-                setupCandlestickChart(responseData)
+                setupBarChart(responseData)
+                binding.barChart.visibility =View.VISIBLE
+                binding.loadBar.visibility = View.GONE
+            }else{
+                binding.barChart.visibility =View.GONE
             }
         }
 
         viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
             if (errorMessage != null) {
                 // Handle the error message, e.g., display it to the user
-
+                binding.loadBar.visibility = View.GONE
+                binding.noDataBar.text = "Tidak Ada Data Untuk Ditampilkan"
             }
         }
 
         return view
     }
-
 
     private fun populateData(body: List<Body>): MutableMap<Int, MutableList<String>> {
         val mapData = mutableMapOf<Int, MutableList<String>>()
@@ -70,10 +80,9 @@ class NilaiAgregatFragment : Fragment(),DataExportable {
         for (item in body) {
             val carbonTanaman = item.carbonTanaman
             val carbonTanah = item.carbonTanah
-            val emisiTanah = item.emisiTanah
             val emisiTanaman = item.emisiTanaman
+            val emisiTanah = item.emisiTanah
             val emisiLingkungan = item.emisiLingkungan
-
             val date = item.date
 
             val calendar = Calendar.getInstance()
@@ -83,8 +92,7 @@ class NilaiAgregatFragment : Fragment(),DataExportable {
                 calendar.time = parsedDate
                 val month = calendar.get(Calendar.MONTH) + 1
 
-
-                val value = "$emisiTanah $emisiTanaman $emisiLingkungan $carbonTanaman $carbonTanah"
+                val value = "$carbonTanaman $carbonTanah $emisiTanaman $emisiTanah $emisiLingkungan"
                 if (mapData.containsKey(month)) {
                     mapData[month]?.add(value)
                 } else {
@@ -102,132 +110,131 @@ class NilaiAgregatFragment : Fragment(),DataExportable {
         }
         return mapData
     }
-
-    private fun setupCandlestickChart(body: List<Body>) {
-        val candlestickChart: CandleStickChart = binding.candle
-
-        val candleEntries = mutableListOf<CandleEntry>()
-        val xAxisLabels = mutableListOf<String>()
-        var entryIndex = 0f
+    private fun setupBarChart(body: List<Body>) {
+        val barChart: BarChart = binding.barChart
 
         val mapData = populateData(body)
 
-        val sortedKeys = mapData.keys.sorted()
+        val sortedData = mapData.toSortedMap(compareBy { it })
 
-        for (month in sortedKeys) {
-            val values = mapData[month]
 
-            val sumEmisiTanah = values?.sumByDouble { value ->
+        val barEntries1 = mutableListOf<BarEntry>()
+        val xAxisLabels = mutableListOf<String>()
+        val xAxisLabelsMonths = mutableListOf<String>()
+        var barIndex = 0f
+        val barWidth = 0.3f // Adjust the width of the bars
+        val monthNames = arrayOf(
+            "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+            "Jul", "Aug", "Sep", "Okt", "Nov", "Des"
+        )
+
+        for ((month, values) in sortedData) {
+            var sumValue1 = 0f // terserap tanaman
+            var sumValue2 = 0f // terserap tanah
+            var sumValue3 = 0f // emisi tanaman
+            var sumValue4 = 0f // emisi tanah
+            var sumValue5 = 0f // emisi lingkungan
+            var count = 0
+
+            for (value in values) {
                 val valueArray = value.split(" ")
                 if (valueArray.size == 5) {
-                    valueArray[0].toDouble()
-                } else {
-                    0.0
+                    sumValue1 += valueArray[0].toFloat()
+                    sumValue2 += valueArray[1].toFloat()
+                    sumValue3 += valueArray[2].toFloat()
+                    sumValue4 += valueArray[3].toFloat()
+                    sumValue5 += valueArray[4].toFloat()
+                    count++
                 }
-            } ?: 0.0
+            }
 
-            val sumEmisiTanaman = values?.sumByDouble { value ->
-                val valueArray = value.split(" ")
-                if (valueArray.size == 5) {
-                    valueArray[1].toDouble()
-                } else {
-                    0.0
-                }
-            } ?: 0.0
+            if (count > 0) {
+                val averageValue1 = sumValue1 / count
+                val averageValue2 = sumValue2 / count
+                val averageValue3 = sumValue3 / count
+                val averageValue4 = sumValue4 / count
+                val averageValue5 = sumValue5 / count
 
-            val sumEmisiLingkungan = values?.sumByDouble { value ->
-                val valueArray = value.split(" ")
-                if (valueArray.size == 5) {
-                    valueArray[2].toDouble()
-                } else {
-                    0.0
-                }
-            } ?: 0.0
+                val agregat = (averageValue1 + averageValue2)+(-(averageValue3+averageValue4+averageValue5))
 
-            val sumCarbonTanaman = values?.sumByDouble { value ->
-                val valueArray = value.split(" ")
-                if (valueArray.size == 5) {
-                    valueArray[3].toDouble()
-                } else {
-                    0.0
-                }
-            } ?: 0.0
+                val entry1 = BarEntry(barIndex, agregat)
+                barEntries1.add(entry1)
+                xAxisLabels.add(month.toString())
+                val monthName = monthNames[month - 1]
+                xAxisLabelsMonths.add(monthName)
+                barIndex += 1f
+            }
 
-            val sumCarbonTanah = values?.sumByDouble { value ->
-                val valueArray = value.split(" ")
-                if (valueArray.size == 5) {
-                    valueArray[4].toDouble()
-                } else {
-                    0.0
-                }
-            } ?: 0.0
-
-            val count = values?.count { value ->
-                val valueArray = value.split(" ")
-                valueArray.size == 5
-            } ?: 1 // Avoid division by zero if there are no valid values
-
-            val averageEmisiTanah = sumEmisiTanah / count
-            val averageEmisiTanaman = sumEmisiTanaman / count
-            val averageEmisiLingkungan = sumEmisiLingkungan / count
-            val averageCarbonTanaman = sumCarbonTanaman / count
-            val averageCarbonTanah = sumCarbonTanah / count
-
-            val value = (averageEmisiTanah + averageEmisiTanaman + averageEmisiLingkungan) - (averageCarbonTanaman + averageCarbonTanah)
-
-            val entry = CandleEntry(entryIndex, value.toFloat(), value.toFloat(), value.toFloat(), value.toFloat())
-            candleEntries.add(entry)
-            xAxisLabels.add(month.toString())
-            entryIndex += 1f
         }
 
-        val candleDataSet = CandleDataSet(candleEntries, "Candlestick Data")
-        candleDataSet.setDrawIcons(false)
-        candleDataSet.axisDependency = YAxis.AxisDependency.LEFT
-        candleDataSet.shadowColor = Color.DKGRAY
-        candleDataSet.shadowWidth = 0.7f
-        candleDataSet.decreasingColor = Color.RED
-        candleDataSet.decreasingPaintStyle = Paint.Style.FILL
-        candleDataSet.increasingColor = Color.GREEN
-        candleDataSet.increasingPaintStyle = Paint.Style.FILL
-        candleDataSet.neutralColor = Color.BLUE
-        candleDataSet.valueTextSize = 10f
-        candleDataSet.setDrawValues(true) // Enable value display on candles
+        val dataSet1 = BarDataSet(barEntries1, "Bar 1")
 
-        val candleData = CandleData(candleDataSet)
-        candlestickChart.data = candleData
+        // Set different colors for positive and negative values
+        val colors = mutableListOf<Int>()
+        for (entry in barEntries1) {
+            if (entry.y >= 0) {
+                colors.add(ContextCompat.getColor(requireContext(), R.color.green))
+            } else {
+                colors.add(ContextCompat.getColor(requireContext(), R.color.red))
+            }
+        }
+        dataSet1.colors = colors
 
-        candlestickChart.legend.isEnabled = false
-        candlestickChart.description.isEnabled = false
+        dataSet1.setDrawValues(true)
 
-        // Animate the Candlestick Chart
-        candlestickChart.animateXY(1000, 1000)
 
-        val xAxisCandle = candlestickChart.xAxis
-        xAxisCandle.valueFormatter = IndexAxisValueFormatter(xAxisLabels.toTypedArray())
-        xAxisCandle.position = XAxis.XAxisPosition.BOTTOM
-        xAxisCandle.setDrawGridLines(false)
-        xAxisCandle.granularity = 1f
+        val barData = BarData(dataSet1)
+        barData.barWidth = barWidth
 
-        candlestickChart.setVisibleXRangeMaximum(candleEntries.size.toFloat()) // Set the visible range on the x-axis
-        candlestickChart.axisRight.isEnabled = false
+        barChart.data = barData
 
-        val yAxisCandle = candlestickChart.axisLeft
-        yAxisCandle.axisMinimum = candleEntries.minByOrNull { it.low }?.low ?: 0f
-        yAxisCandle.axisMaximum = candleEntries.maxByOrNull { it.high }?.high ?: 10f
+        // Configure other properties of the bar chart as needed
+        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabelsMonths.toTypedArray())
+        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+        barChart.xAxis.granularity = 1f
+        barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
+        barChart.description.isEnabled = false
+        barChart.legend.isEnabled = false
+        // Disable the y-axis on the right side
+        barChart.axisRight.isEnabled = false
 
-        candlestickChart.invalidate()
+        // Group the bars and adjust spacing
+//        barChart.groupBars(-0.25f, 0.11f, 0.11f)
+
+        barChart.notifyDataSetChanged()
+        barChart.invalidate()
+
+        // make the table
+        val rowTemplate = "|  {label}  |  {value1}  |\n"
+        renderedTable = TableBuilder.buildTable(xAxisLabels, rowTemplate, barEntries1)
     }
 
-    override fun getData(): String  {
-        val cachedData = dataCache[CACHE_KEY]
-        return cachedData.toString() ?: "No Data on Fragment 1"
+
+    override fun getData(): String {
+        return renderedTable
+    }
+
+    override fun getScreen(): Bitmap? {
+        return (captureGraph())
+    }
+
+    private fun captureGraph(): Bitmap? {
+        val graphView = binding.barChart
+
+        // Create a bitmap with the same size as the graph view
+        val bitmap = Bitmap.createBitmap(graphView.width, graphView.height, Bitmap.Config.ARGB_8888)
+
+        // Create a canvas with the bitmap
+        val canvas = Canvas(bitmap)
+
+        // Draw the graph view onto the canvas
+        graphView.draw(canvas)
+
+        return bitmap
     }
 
     companion object {
         private const val CACHE_KEY = "karbon_terserap_fragment_cache"
 
     }
-
-
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".NilaiAgregatFragment">
 
@@ -29,10 +30,33 @@
             android:textSize="12sp" />
 
 
-        <com.github.mikephil.charting.charts.CandleStickChart
-            android:id="@+id/candle"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/loadBar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"
+                app:lottie_rawRes="@raw/loading_small" />
+
+            <TextView
+                android:id="@+id/noDataBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                android:textAlignment="center" />
+        </FrameLayout>
 
 
     </LinearLayout>
@@ -52,7 +76,7 @@
                 android:fontFamily="@font/roboto_regular"
                 android:gravity="center"
                 android:padding="10dp"
-                android:text="@string/hari_setelah_tanam_hst"
+                android:text="@string/nilai_agregat"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 
@@ -82,7 +106,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/rectangle_karbon_tanaman" />
+                        android:src="@drawable/red_rectangle" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -90,7 +114,7 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
                         android:fontFamily="@font/roboto_regular"
-                        android:text="@string/karbon_tanaman"
+                        android:text="@string/defisit"
                         android:textColor="@color/black"
                         android:textSize="10sp" />
                 </LinearLayout>
@@ -104,7 +128,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/rectangle_karbon_tanah" />
+                        android:src="@drawable/green_rectangle" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -112,7 +136,7 @@
                         android:layout_gravity="center"
                         android:layout_marginStart="10dp"
                         android:fontFamily="@font/roboto_regular"
-                        android:text="@string/karbon_tanah"
+                        android:text="@string/surplus"
                         android:textColor="@color/black"
                         android:textSize="10sp" />
                 </LinearLayout>
