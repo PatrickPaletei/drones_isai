@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".LocationFragment">
 
 
@@ -23,6 +23,18 @@
         android:queryHint="Cari Lokasi"
         android:theme="@style/SearchViewStyle"
         android:iconifiedByDefault="false" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/switch_map"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:backgroundTint="@color/blue_light"
+        app:tint="@color/white"
+        android:src="@drawable/ic_map"
+        android:layout_margin="20dp"/>
+
+
 
 
 </FrameLayout>

@@ -1,230 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     tools:context=".KarbonTerserapFragment">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
-            android:orientation="vertical">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_weight="0.8">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="-30dp"
-                        android:layout_marginRight="-30dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:rotation="270"
-                        android:text="@string/jumlah_karbon_gr"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
-
-                    <com.github.mikephil.charting.charts.CandleStickChart
-                        android:id="@+id/candleChart"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </LinearLayout>
-
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="12dp"
-                    android:background="@drawable/rectangle_background"
-                    android:padding="8dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="2dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/green_rectangle" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="@string/surplus"
-                                android:textColor="@color/black"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="2dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/red_rectangle" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="@string/defisit"
-                                android:textColor="@color/black"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-
-                </FrameLayout>
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.5"
             android:orientation="vertical">
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_weight="0.5"
                 android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="0.8">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_marginLeft="-30dp"
-                        android:layout_marginRight="-30dp"
-                        android:fontFamily="@font/roboto_regular"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:rotation="270"
-                        android:text="@string/jumlah_karbon_gr"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
-
-                    <com.github.mikephil.charting.charts.BarChart
-                        android:id="@+id/barChart"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
-                </LinearLayout>
-
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="12dp"
-                    android:background="@drawable/rectangle_background"
-                    android:padding="8dp">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:gravity="center"
-                        android:orientation="horizontal">
+                        android:layout_height="0dp"
+                        android:layout_weight="0.8">
 
-                        <LinearLayout
-                            android:layout_width="2dp"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:gravity="center">
+                            android:layout_gravity="center"
+                            android:layout_marginLeft="-30dp"
+                            android:layout_marginRight="-30dp"
+                            android:fontFamily="@font/roboto_regular"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:rotation="270"
+                            android:text="@string/jumlah_karbon_gr"
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
 
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/rectangle_karbon_tanaman" />
+                        <FrameLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <com.github.mikephil.charting.charts.BarChart
+                                android:id="@+id/barChart"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent" />
+
+
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/loadBar"
+                                android:layout_width="100dp"
+                                android:layout_height="100dp"
+                                android:layout_gravity="center"
+                                app:lottie_autoPlay="true"
+                                app:lottie_loop="true"
+                                app:lottie_rawRes="@raw/loading_small" />
 
                             <TextView
-                                android:layout_width="wrap_content"
+                                android:id="@+id/noDataBar"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="@string/karbon_tanaman"
-                                android:textColor="@color/black"
-                                android:textSize="10sp" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="2dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:gravity="center">
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/rectangle_karbon_tanah" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_marginLeft="10dp"
-                                android:fontFamily="@font/roboto_regular"
-                                android:text="@string/karbon_tanah"
-                                android:textColor="@color/black"
-                                android:textSize="10sp" />
-                        </LinearLayout>
+                                android:layout_margin="20dp"
+                                android:textAlignment="center" />
+                        </FrameLayout>
                     </LinearLayout>
 
-                </FrameLayout>
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="12dp"
+                        android:background="@drawable/rectangle_background"
+                        android:padding="8dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="8dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="2dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:gravity="center">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/rectangle_karbon_tanaman" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:text="@string/karbon_tanaman"
+                                    android:textColor="@color/black"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="2dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.5"
+                                android:gravity="center">
+
+                                <ImageView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:src="@drawable/rectangle_karbon_tanah" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:layout_marginLeft="10dp"
+                                    android:fontFamily="@font/roboto_regular"
+                                    android:text="@string/karbon_tanah"
+                                    android:textColor="@color/black"
+                                    android:textSize="10sp" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                    </FrameLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
-
         </LinearLayout>
 
-    </LinearLayout>
+    </FrameLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_zoom"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:backgroundTint="@color/blue_light"
-        android:src="@drawable/ic_zoom"
-        android:layout_margin="20dp"
-        />
-</FrameLayout>
+</ScrollView>

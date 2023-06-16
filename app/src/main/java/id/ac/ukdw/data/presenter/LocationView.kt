@@ -6,5 +6,6 @@ interface LocationView {
     fun isMapReady(): Boolean
     fun displayMarkers(markerList: List<MarkerData>)
     fun updateMarkers(filteredMarkers: List<MarkerData>)
+
     // Other methods as needed
 }

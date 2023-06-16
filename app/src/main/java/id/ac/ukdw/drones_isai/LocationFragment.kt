@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 
 import id.ac.ukdw.data.presenter.LocationPresenter
 import id.ac.ukdw.data.presenter.LocationView
+import id.ac.ukdw.drones_isai.databinding.FragmentLocationBinding
 
 
 class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
@@ -28,30 +29,42 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
     private lateinit var googleMap: GoogleMap
     private lateinit var searchView: SearchView
 
+    private var _binding: FragmentLocationBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_location, container, false)
+        _binding = FragmentLocationBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         presenter = LocationPresenter(this)
-
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
-        setupSearchView(view)
+        setupSearchView()
 
         presenter.loadData()
+        binding.switchMap.setOnClickListener {
+            if (googleMap.mapType == GoogleMap.MAP_TYPE_NORMAL) {
+                googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+            } else {
+                googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
+            }
+        }
     }
 
 
     // Implement LocationView interface methods
     override fun isMapReady(): Boolean {
+        googleMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
         return ::googleMap.isInitialized
+
     }
 
     override fun displayMarkers(markerList: List<MarkerData>) {
@@ -61,7 +74,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         for (markerData in markerList) {
             if (markerData.latitude != 0.0 && markerData.longitude != 0.0
                 && markerData.komoditas != "null" && markerData.namaLahan != "null"
-                && markerData.carbon_tanah != "null" && markerData.karbonTanaman != "null"
+                && markerData.karbonTanah != "null" && markerData.karbonTanaman != "null"
                 && markerData.KodeSampel != "null" && markerData.tglSampel != "null"
             ) {
                 val markerOptions = MarkerOptions()
@@ -108,8 +121,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
                 namaLahanTextView.text = markerData.namaLahan
                 komoditasTextView.text = markerData.komoditas
                 tglSampelTextView.text = markerData.tglSampel
-                karbonTanahTextView.text = markerData.carbon_tanah
-                karbonTanamahTextView.text = markerData.carbon_tanah
+                karbonTanahTextView.text = markerData.karbonTanah
+                karbonTanamahTextView.text = markerData.karbonTanah
 
                 bottomSheetDialog.setContentView(view)
                 bottomSheetDialog.show()
@@ -144,10 +157,12 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
     }
 
 
+
+
     // Other methods in LocationFragment
 
-    private fun setupSearchView(view: View) {
-        searchView = view.findViewById(R.id.searchView)
+    private fun setupSearchView() {
+        searchView = binding.searchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
                 presenter.searchMarkers(query)
@@ -166,6 +181,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
     override fun onMapReady(gMap: GoogleMap) {
         googleMap = gMap
     }
+
 
 
 }

@@ -7,7 +7,7 @@ data class MarkerData(
     val namaLahan:String,
     val komoditas:String,
     val tglSampel:String,
-    val carbon_tanah:String,
+    val karbonTanah:String,
     val karbonTanaman:String
     // Other fields as needed
 )
