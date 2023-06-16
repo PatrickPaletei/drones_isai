@@ -13,5 +13,7 @@
     <color name="red">#801313</color>
     <color name="red_candle">#C71515</color>
     <color name="green">#1FB02D</color>
+    <color name="blue_theme">#134280</color>
+    <color name="second_theme">#666769</color>
 
 </resources>

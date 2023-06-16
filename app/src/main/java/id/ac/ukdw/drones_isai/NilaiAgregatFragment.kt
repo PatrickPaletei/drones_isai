@@ -4,10 +4,10 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -74,7 +74,10 @@ class NilaiAgregatFragment : Fragment(), DataExportable {
         return view
     }
 
-    private fun populateData(body: List<Body>): MutableMap<Int, MutableList<String>> {
+    private fun populateData(body: List<Body>, filterEnabled: Boolean,
+                             selectedYear: Int?, selectedKomoditas: String?,
+                             selectedLokasi: String?): MutableMap<Int, MutableList<String>> {
+
         val mapData = mutableMapOf<Int, MutableList<String>>()
 
         for (item in body) {
@@ -84,131 +87,135 @@ class NilaiAgregatFragment : Fragment(), DataExportable {
             val emisiTanah = item.emisiTanah
             val emisiLingkungan = item.emisiLingkungan
             val date = item.date
+            val komoditas = item.comodity
+            val lokasi = item.loc
 
             val calendar = Calendar.getInstance()
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
             val parsedDate = dateFormat.parse(date)
             if (parsedDate != null) {
                 calendar.time = parsedDate
+                val year = calendar.get(Calendar.YEAR)
                 val month = calendar.get(Calendar.MONTH) + 1
 
-                val value = "$carbonTanaman $carbonTanah $emisiTanaman $emisiTanah $emisiLingkungan"
-                if (mapData.containsKey(month)) {
-                    mapData[month]?.add(value)
-                } else {
-                    mapData[month] = mutableListOf(value)
+                // Apply filtering if the flag is enabled
+                if (!filterEnabled || (selectedYear == null || year == selectedYear)
+                    && (selectedKomoditas == null || komoditas == selectedKomoditas)
+                    && (selectedLokasi == null || lokasi == selectedLokasi)
+                ) {
+                    val value = "$carbonTanaman $carbonTanah $emisiTanaman $emisiTanah $emisiLingkungan"
+                    if (mapData.containsKey(month)) {
+                        mapData[month]?.add(value)
+                    } else {
+                        mapData[month] = mutableListOf(value)
+                    }
                 }
             }
         }
 
-        for ((month, values) in mapData) {
-            Log.d("dataPair", "$month: $values")
-        }
-
-        if (body.isEmpty()) {
-            Log.d("noData", "body is empty")
-        }
         return mapData
     }
     private fun setupBarChart(body: List<Body>) {
         val barChart: BarChart = binding.barChart
 
-        val mapData = populateData(body)
+        val mapData = populateData(body, false, null, null, null)
+        if (mapData.isNotEmpty()){
+            val sortedData = mapData.toSortedMap(compareBy { it })
 
-        val sortedData = mapData.toSortedMap(compareBy { it })
+            val barEntries1 = mutableListOf<BarEntry>()
+            val xAxisLabels = mutableListOf<String>()
+            val xAxisLabelsMonths = mutableListOf<String>()
+            var barIndex = 0f
+            val barWidth = 0.3f // Adjust the width of the bars
+            val monthNames = arrayOf(
+                "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
+                "Jul", "Aug", "Sep", "Okt", "Nov", "Des"
+            )
 
+            for ((month, values) in sortedData) {
+                var sumValue1 = 0f // terserap tanaman
+                var sumValue2 = 0f // terserap tanah
+                var sumValue3 = 0f // emisi tanaman
+                var sumValue4 = 0f // emisi tanah
+                var sumValue5 = 0f // emisi lingkungan
+                var count = 0
 
-        val barEntries1 = mutableListOf<BarEntry>()
-        val xAxisLabels = mutableListOf<String>()
-        val xAxisLabelsMonths = mutableListOf<String>()
-        var barIndex = 0f
-        val barWidth = 0.3f // Adjust the width of the bars
-        val monthNames = arrayOf(
-            "Jan", "Feb", "Mar", "Apr", "Mei", "Jun",
-            "Jul", "Aug", "Sep", "Okt", "Nov", "Des"
-        )
+                for (value in values) {
+                    val valueArray = value.split(" ")
+                    if (valueArray.size == 5) {
+                        sumValue1 += valueArray[0].toFloat()
+                        sumValue2 += valueArray[1].toFloat()
+                        sumValue3 += valueArray[2].toFloat()
+                        sumValue4 += valueArray[3].toFloat()
+                        sumValue5 += valueArray[4].toFloat()
+                        count++
+                    }
+                }
 
-        for ((month, values) in sortedData) {
-            var sumValue1 = 0f // terserap tanaman
-            var sumValue2 = 0f // terserap tanah
-            var sumValue3 = 0f // emisi tanaman
-            var sumValue4 = 0f // emisi tanah
-            var sumValue5 = 0f // emisi lingkungan
-            var count = 0
+                if (count > 0) {
+                    val averageValue1 = sumValue1 / count
+                    val averageValue2 = sumValue2 / count
+                    val averageValue3 = sumValue3 / count
+                    val averageValue4 = sumValue4 / count
+                    val averageValue5 = sumValue5 / count
 
-            for (value in values) {
-                val valueArray = value.split(" ")
-                if (valueArray.size == 5) {
-                    sumValue1 += valueArray[0].toFloat()
-                    sumValue2 += valueArray[1].toFloat()
-                    sumValue3 += valueArray[2].toFloat()
-                    sumValue4 += valueArray[3].toFloat()
-                    sumValue5 += valueArray[4].toFloat()
-                    count++
+                    val agregat = (averageValue1 + averageValue2)+(-(averageValue3+averageValue4+averageValue5))
+
+                    val entry1 = BarEntry(barIndex, agregat)
+                    barEntries1.add(entry1)
+                    xAxisLabels.add(month.toString())
+                    val monthName = monthNames[month - 1]
+                    xAxisLabelsMonths.add(monthName)
+                    barIndex += 1f
+                }
+
+            }
+
+            val dataSet1 = BarDataSet(barEntries1, "Bar 1")
+
+            // Set different colors for positive and negative values
+            val colors = mutableListOf<Int>()
+            for (entry in barEntries1) {
+                if (entry.y >= 0) {
+                    colors.add(ContextCompat.getColor(requireContext(), R.color.green))
+                } else {
+                    colors.add(ContextCompat.getColor(requireContext(), R.color.red))
                 }
             }
+            dataSet1.colors = colors
 
-            if (count > 0) {
-                val averageValue1 = sumValue1 / count
-                val averageValue2 = sumValue2 / count
-                val averageValue3 = sumValue3 / count
-                val averageValue4 = sumValue4 / count
-                val averageValue5 = sumValue5 / count
-
-                val agregat = (averageValue1 + averageValue2)+(-(averageValue3+averageValue4+averageValue5))
-
-                val entry1 = BarEntry(barIndex, agregat)
-                barEntries1.add(entry1)
-                xAxisLabels.add(month.toString())
-                val monthName = monthNames[month - 1]
-                xAxisLabelsMonths.add(monthName)
-                barIndex += 1f
-            }
-
-        }
-
-        val dataSet1 = BarDataSet(barEntries1, "Bar 1")
-
-        // Set different colors for positive and negative values
-        val colors = mutableListOf<Int>()
-        for (entry in barEntries1) {
-            if (entry.y >= 0) {
-                colors.add(ContextCompat.getColor(requireContext(), R.color.green))
-            } else {
-                colors.add(ContextCompat.getColor(requireContext(), R.color.red))
-            }
-        }
-        dataSet1.colors = colors
-
-        dataSet1.setDrawValues(true)
+            dataSet1.setDrawValues(true)
 
 
-        val barData = BarData(dataSet1)
-        barData.barWidth = barWidth
+            val barData = BarData(dataSet1)
+            barData.barWidth = barWidth
 
-        barChart.data = barData
+            barChart.data = barData
 
-        // Configure other properties of the bar chart as needed
-        barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabelsMonths.toTypedArray())
-        barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
-        barChart.xAxis.granularity = 1f
-        barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
-        barChart.description.isEnabled = false
-        barChart.legend.isEnabled = false
-        // Disable the y-axis on the right side
-        barChart.axisRight.isEnabled = false
+            // Configure other properties of the bar chart as needed
+            barChart.xAxis.valueFormatter = IndexAxisValueFormatter(xAxisLabelsMonths.toTypedArray())
+            barChart.xAxis.position = XAxis.XAxisPosition.BOTTOM
+            barChart.xAxis.granularity = 1f
+            barChart.animateXY(1000, 1000, Easing.EaseInOutQuad)
+            barChart.description.isEnabled = false
+            barChart.legend.isEnabled = false
+            // Disable the y-axis on the right side
+            barChart.axisRight.isEnabled = false
 
-        // Group the bars and adjust spacing
+            // Group the bars and adjust spacing
 //        barChart.groupBars(-0.25f, 0.11f, 0.11f)
 
-        barChart.notifyDataSetChanged()
-        barChart.invalidate()
+            barChart.notifyDataSetChanged()
+            barChart.invalidate()
 
-        // make the table
-        val rowTemplate = "|  {label}  |  {value1}  |\n"
-        renderedTable = TableBuilder.buildTable(xAxisLabels, rowTemplate, barEntries1)
+            // make the table
+            val rowTemplate = "|  {label}  |  {value1}  |\n"
+            renderedTable = TableBuilder.buildTable(xAxisLabels, rowTemplate, barEntries1)
+        }else{
+            Toast.makeText(context, "Tidak Ada Data Sesuai Filter!", Toast.LENGTH_LONG).show()
+        }
+
     }
-
 
     override fun getData(): String {
         return renderedTable
@@ -234,7 +241,7 @@ class NilaiAgregatFragment : Fragment(), DataExportable {
     }
 
     companion object {
-        private const val CACHE_KEY = "karbon_terserap_fragment_cache"
+        private const val CACHE_KEY = "agregat_fragment_cache"
 
     }
 }
