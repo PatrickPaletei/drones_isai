@@ -4,7 +4,7 @@ package id.ac.ukdw.drones_isai
 import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Intent
-import android.graphics.Bitmap
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,21 +13,15 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.viewpager2.widget.ViewPager2
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.itextpdf.text.Document
-import com.itextpdf.text.Element
-import com.itextpdf.text.Image
-import com.itextpdf.text.Paragraph
-import com.itextpdf.text.pdf.PdfPTable
-import com.itextpdf.text.pdf.PdfWriter
 import id.ac.ukdw.adapter.SpinnerFilterAdapter
 import id.ac.ukdw.adapter.ViewPagerAdapter
 import id.ac.ukdw.data.PDFExporter
@@ -35,29 +29,32 @@ import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.drones_isai.databinding.FilterBottomPopupBinding
 import id.ac.ukdw.drones_isai.databinding.FragmentTrenBinding
 import id.ac.ukdw.helper.DataExportable
-import java.io.File
-import java.io.FileOutputStream
+import id.ac.ukdw.viewmodel.MainViewModel
+import id.ac.ukdw.viewmodel.SharedFilterViewModel
 import java.io.IOException
 
 
 data class SpinnerItem(val id: Int, val name: String)
 class TrendFragment : Fragment() {
 
-
     private lateinit var binding: FragmentTrenBinding
+    private lateinit var viewPager: ViewPager
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var sharedViewModel: SharedFilterViewModel
 
-    private val spinner1Items = listOf(
-        SpinnerItem(1, "2020"),
-        SpinnerItem(2, "2021"),
-        SpinnerItem(3, "2022")
-    )
-    private val spinner2Items = listOf(
-        SpinnerItem(1, "2"),
-        SpinnerItem(2, "3"),
-        SpinnerItem(3, "4")
-    )
-    private val spinner3Items = arrayOf("Padi", "Cabe", "Coklat")
+    private val viewModel: MainViewModel by viewModels()
+    private val dataCache: HashMap<String, List<Body>> = HashMap()
 
+    private val tahun = mutableListOf<SpinnerItem>()
+    private val lokasi = mutableListOf<SpinnerItem>()
+    private val komoditas = mutableListOf<SpinnerItem>()
+
+    private lateinit var viewPagerAdapter: ViewPagerAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedFilterViewModel::class.java)
+    }
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreateView(
@@ -72,9 +69,11 @@ class TrendFragment : Fragment() {
         val toolbar = view.findViewById<Toolbar>(R.id.toolbar)
         (activity as AppCompatActivity).setSupportActionBar(toolbar)
         (requireActivity() as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
+
         // Set up the ViewPager adapter
         val adapter = ViewPagerAdapter(childFragmentManager)
-        binding.viewPager.adapter = adapter
+        viewPager = binding.viewPager  // Assign the ViewPager to the lateinit variable
+        viewPager.adapter = adapter
 
         // Set up the TabLayout
         binding.tabLayout.setupWithViewPager(binding.viewPager)
@@ -86,9 +85,102 @@ class TrendFragment : Fragment() {
         binding.btnExport.setOnClickListener {
             exportDataToPDF()
         }
+        getSpinnerData()
+
 
         return view
     }
+
+    private fun getSpinnerData(){
+        val cachedData = dataCache[CACHE_KEY]
+        if (cachedData != null) {
+            appendDataToSpinnerLists(cachedData)
+        } else {
+            viewModel.fetchData()
+        }
+        // Observe the view model's LiveData for changes
+        viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
+            if (responseData != null) {
+                appendDataToSpinnerLists(responseData)
+            }else{
+
+            }
+        }
+
+        viewModel.errorMessage.observe(viewLifecycleOwner) { errorMessage ->
+            if (errorMessage != null) {
+
+            }
+        }
+    }
+
+    private fun appendDataToSpinnerLists(body: List<Body>) {
+        val addedItems = mutableSetOf<String>() // Track added items to avoid duplicates
+        var idCounter = 1 // Start the counter from 1
+
+        for (item in body) {
+            val year = item.date.substring(0, 4) // Extract the year from the date
+
+            val tahunItem = SpinnerItem(idCounter, year)
+            val lokasiItem = SpinnerItem(idCounter, item.loc)
+            val komoditasItem = SpinnerItem(idCounter, item.comodity)
+
+            if (!addedItems.contains(year)) {
+                tahun.add(tahunItem)
+                addedItems.add(year)
+            }
+
+            if (!addedItems.contains(item.loc)) {
+                lokasi.add(lokasiItem)
+                addedItems.add(item.loc)
+            }
+
+            if (!addedItems.contains(item.comodity)) {
+                komoditas.add(komoditasItem)
+                addedItems.add(item.comodity)
+            }
+
+            idCounter++ // Increment the counter after assigning the IDs
+        }
+    }
+
+    private fun showBottomPopupDialog() {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val dialogBinding = FilterBottomPopupBinding.inflate(LayoutInflater.from(requireContext()))
+        bottomSheetDialog.setContentView(dialogBinding.root)
+
+        val spinner1 = dialogBinding.spinnerTahun
+        val spinner2 = dialogBinding.spinnerDataKarbon
+        val spinner3 = dialogBinding.spinnerJenisKomoditas
+
+        val spinner1Adapter = SpinnerFilterAdapter(requireContext(), android.R.layout.simple_spinner_item, tahun)
+        spinner1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner1.adapter = spinner1Adapter
+
+        val spinner2Adapter = SpinnerFilterAdapter(requireContext(), android.R.layout.simple_spinner_item, lokasi)
+        spinner2Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner2.adapter = spinner2Adapter
+
+        val spinner3Adapter = SpinnerFilterAdapter(requireContext(), android.R.layout.simple_spinner_item, komoditas)
+        spinner3Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner3.adapter = spinner3Adapter
+
+        val btn = dialogBinding.filterBtn
+        dialogBinding.apply {
+            filterBtn.setOnClickListener {
+                val selectedTahun = (spinner1.selectedItem as SpinnerItem).name
+                val selectedLokasi = (spinner2.selectedItem as SpinnerItem).name
+                val selectedComodity = (spinner3.selectedItem as SpinnerItem).name
+                btn.showLoading()
+                sharedViewModel.setButtonStateAndValue(true, selectedTahun,selectedLokasi,selectedComodity)
+                bottomSheetDialog.dismiss()
+            }
+        }
+        // Show the bottom sheet dialog
+        bottomSheetDialog.show()
+    }
+
+
 
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun exportDataToPDF() {
@@ -147,32 +239,11 @@ class TrendFragment : Fragment() {
         }
     }
 
+    companion object {
+        private const val CACHE_KEY = "tren_fragment_cache"
 
-
-    private fun showBottomPopupDialog() {
-        val bottomSheetDialog = BottomSheetDialog(requireContext())
-        val dialogBinding = FilterBottomPopupBinding.inflate(LayoutInflater.from(requireContext()))
-        bottomSheetDialog.setContentView(dialogBinding.root)
-
-        val spinner1 = dialogBinding.spinnerTahun
-        val spinner2 = dialogBinding.spinnerDataKarbon
-        val spinner3 = dialogBinding.spinnerJenisKomoditas
-
-        val spinner1Adapter = SpinnerFilterAdapter(requireContext(), android.R.layout.simple_spinner_item, spinner1Items)
-        spinner1Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner1.adapter = spinner1Adapter
-
-        val spinner2Adapter = SpinnerFilterAdapter(requireContext(), android.R.layout.simple_spinner_item, spinner2Items)
-        spinner2Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner2.adapter = spinner2Adapter
-
-        val spinner3Adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, spinner3Items)
-        spinner3Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinner3.adapter = spinner3Adapter
-
-        // Show the bottom sheet dialog
-        bottomSheetDialog.show()
     }
+
 
 
 }

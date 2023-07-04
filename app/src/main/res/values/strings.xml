@@ -39,4 +39,6 @@
     <string name="data_karbon">Data Karbon</string>
     <string name="jenis_komoditas">Jenis Komoditas</string>
     <string name="nilai_agregat">Nilai Agregat</string>
+    <string name="lokasi">Lokasi</string>
+    <string name="terapkan_filter">Terapkan Filter</string>
 </resources>
