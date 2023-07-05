@@ -1,7 +1,6 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw.drones_isai.ui
 
 import android.annotation.SuppressLint
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
@@ -9,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -23,21 +21,19 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import id.ac.ukdw.data.DataPopulator
 import id.ac.ukdw.data.model.Body
+import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FragmentNilaiHSTBinding
+import id.ac.ukdw.drones_isai.utils.GraphCaptureUtils
 import id.ac.ukdw.helper.DataExportable
 import id.ac.ukdw.helper.TableBuilder
 import id.ac.ukdw.viewmodel.MainViewModel
 import id.ac.ukdw.viewmodel.SharedFilterViewModel
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 
 class NilaiAgregatFragment : Fragment(), DataExportable {
 
     private lateinit var binding: FragmentNilaiHSTBinding
     private lateinit var sharedViewModel: SharedFilterViewModel
-    private val dataCache: HashMap<String, List<Body>> = HashMap()
     private val viewModel: MainViewModel by viewModels()
     private var renderedTable: String = ""
     private val dataPopulator: DataPopulator = DataPopulator()
@@ -53,15 +49,10 @@ class NilaiAgregatFragment : Fragment(), DataExportable {
         // Inflate the layout for this fragment
         binding = FragmentNilaiHSTBinding.inflate(inflater, container, false)
         val view = binding.root
-        val cachedData = dataCache[CACHE_KEY]
-        if (cachedData != null) {
-            setupBarChart(cachedData)
-            binding.barChart.visibility = View.VISIBLE
-        } else {
-            binding.loadBar.visibility = View.VISIBLE
-            binding.barChart.visibility = View.GONE
-            viewModel.fetchData()
-        }
+
+
+        viewModel.fetchData()
+        binding.barChart.visibility = View.GONE
 
         // Observe the view model's LiveData for changes
         viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
@@ -114,6 +105,13 @@ class NilaiAgregatFragment : Fragment(), DataExportable {
                                 "onResume: $selectedTahun $selectedLokasi $selectedComodity $responseData"
                             )
                         }
+                    }
+                }
+            }else {
+                viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
+                    clearChart()
+                    if (responseData != null) {
+                        setupBarChart(responseData)
                     }
                 }
             }
@@ -342,21 +340,7 @@ class NilaiAgregatFragment : Fragment(), DataExportable {
 
     private fun captureGraph(): Bitmap? {
         val graphView = binding.barChart
-
-        // Create a bitmap with the same size as the graph view
-        val bitmap = Bitmap.createBitmap(graphView.width, graphView.height, Bitmap.Config.ARGB_8888)
-
-        // Create a canvas with the bitmap
-        val canvas = Canvas(bitmap)
-
-        // Draw the graph view onto the canvas
-        graphView.draw(canvas)
-
-        return bitmap
-    }
-
-    companion object {
-        private const val CACHE_KEY = "agregat_fragment_cache"
+        return GraphCaptureUtils.captureGraph(graphView)
     }
 
 }

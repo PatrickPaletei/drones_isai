@@ -1,8 +1,7 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw.drones_isai.ui
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,28 +20,26 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import id.ac.ukdw.data.DataPopulator
 import id.ac.ukdw.data.model.Body
+import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FragmentKarbonTerserapBinding
+import id.ac.ukdw.drones_isai.utils.GraphCaptureUtils
 import id.ac.ukdw.helper.DataExportable
 import id.ac.ukdw.helper.TableBuilder
 import id.ac.ukdw.viewmodel.MainViewModel
 import id.ac.ukdw.viewmodel.SharedFilterViewModel
-import java.io.IOException
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 
 class KarbonTerserapFragment : Fragment(), DataExportable {
 
     private lateinit var binding: FragmentKarbonTerserapBinding
     private lateinit var sharedViewModel: SharedFilterViewModel
-    private val dataCache: HashMap<String, List<Body>> = HashMap()
     private val viewModel: MainViewModel by viewModels()
     private var renderedTable: String = ""
     private val dataPopulator: DataPopulator = DataPopulator()
     private var selectedTahun: String? = null
     private var selectedLokasi: String? = null
     private var selectedComodity: String? = null
+
     @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,23 +49,17 @@ class KarbonTerserapFragment : Fragment(), DataExportable {
         binding = FragmentKarbonTerserapBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val cachedData = dataCache[CACHE_KEY]
-        if (cachedData != null) {
-            setupBarChart(cachedData)
-            binding.barChart.visibility =View.VISIBLE
-        } else {
-            binding.loadBar.visibility = View.VISIBLE
-            binding.barChart.visibility =View.GONE
-            viewModel.fetchData()
-        }
+
+        viewModel.fetchData()
+        binding.barChart.visibility = View.GONE
         // Observe the view model's LiveData for changes
         viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
             if (responseData != null) {
                 setupBarChart(responseData)
-                binding.barChart.visibility =View.VISIBLE
+                binding.barChart.visibility = View.VISIBLE
                 binding.loadBar.visibility = View.GONE
-            }else{
-                binding.barChart.visibility =View.GONE
+            } else {
+                binding.barChart.visibility = View.GONE
             }
         }
 
@@ -97,24 +88,30 @@ class KarbonTerserapFragment : Fragment(), DataExportable {
                 selectedLokasi = sharedViewModel.lokasiValue.value
                 selectedComodity = sharedViewModel.comodityValue.value
                 viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
+                    if (responseData != null && selectedLokasi != null && selectedComodity != null && selectedTahun != null) {
+                        clearChart()
+                        setupBarChartFilter(
+                            responseData,
+                            selectedTahun!!,
+                            selectedComodity!!,
+                            selectedLokasi!!
+                        )
+                        Log.d(
+                            "globalOnR",
+                            "onResume: $selectedTahun $selectedLokasi $selectedComodity $responseData"
+                        )
+                    }
+                }
+            } else {
+                viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
+                    clearChart()
                     if (responseData != null) {
-                        if (selectedLokasi != null && selectedComodity != null && selectedTahun != null) {
-                            clearChart()
-                            setupBarChartFilter(
-                                responseData,
-                                selectedTahun!!,
-                                selectedComodity!!,
-                                selectedLokasi!!
-                            )
-                            Log.d(
-                                "globalOnR",
-                                "onResume: $selectedTahun $selectedLokasi $selectedComodity $responseData"
-                            )
-                        }
+                        setupBarChart(responseData)
                     }
                 }
             }
         }
+
     }
 
     private fun clearChart() {
@@ -204,6 +201,7 @@ class KarbonTerserapFragment : Fragment(), DataExportable {
         val rowTemplate = "|  {label}  |  {value1}  |  {value2} |\n"
         renderedTable = TableBuilder.buildTable(xAxisLabels, rowTemplate, barEntries1, barEntries2)
     }
+
     private fun setupBarChartFilter(body: List<Body>, year: String, comodity: String, loc: String) {
         val barChart: BarChart = binding.barChart
 
@@ -298,25 +296,9 @@ class KarbonTerserapFragment : Fragment(), DataExportable {
 
     private fun captureGraph(): Bitmap? {
         val graphView = binding.barChart
-
-        // Create a bitmap with the same size as the graph view
-        val bitmap = Bitmap.createBitmap(graphView.width, graphView.height, Bitmap.Config.ARGB_8888)
-
-        // Create a canvas with the bitmap
-        val canvas = Canvas(bitmap)
-
-        // Draw the graph view onto the canvas
-        graphView.draw(canvas)
-
-        return bitmap
+        return GraphCaptureUtils.captureGraph(graphView)
     }
 
 
-    companion object {
-        private const val CACHE_KEY = "karbon_terserap_fragment_cache"
-
-
-
-    }
 
 }

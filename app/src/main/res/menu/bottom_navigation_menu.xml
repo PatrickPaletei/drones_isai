@@ -13,9 +13,9 @@
         android:icon="@mipmap/tren_nilai_foreground"/>
 
     <item
-        android:id="@+id/menu_kalkulator"
+        android:id="@+id/menu_bantuan"
         android:title="Bantuan"
-        android:icon="@mipmap/kalkulator_foreground"/>
+        android:icon="@mipmap/ic_icon_foreground"/>
     <item
         android:id="@+id/menu_about"
         android:title="Tentang"

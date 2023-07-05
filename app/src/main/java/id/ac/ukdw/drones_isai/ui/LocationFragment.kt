@@ -1,4 +1,4 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw.drones_isai.ui
 
 import MarkerData
 import android.os.Bundle
@@ -20,6 +20,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 
 import id.ac.ukdw.data.presenter.LocationPresenter
 import id.ac.ukdw.data.presenter.LocationView
+import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FragmentLocationBinding
 
 

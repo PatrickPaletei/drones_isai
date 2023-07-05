@@ -1,14 +1,14 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw.drones_isai.ui
 
 import android.os.Bundle
 import android.view.*
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FragmentKalkulatorBinding
 
 
@@ -30,9 +30,9 @@ class KalkulatorFragment : Fragment() {
         toolbarTitle.gravity = Gravity.CENTER
         toolbarTitle.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
 
-        binding.icHelp.setOnClickListener {
-            findNavController().navigate(R.id.action_kalkulatorFragment_to_bantuanFragment)
-        }
+//        binding.icHelp.setOnClickListener {
+//            findNavController().navigate(R.id.action_kalkulatorFragment_to_bantuanFragment)
+//        }
 
 
     }

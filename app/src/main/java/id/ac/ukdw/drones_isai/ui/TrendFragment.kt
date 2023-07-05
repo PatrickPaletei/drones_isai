@@ -1,10 +1,9 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw.drones_isai.ui
 
 
 import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -26,6 +25,7 @@ import id.ac.ukdw.adapter.SpinnerFilterAdapter
 import id.ac.ukdw.adapter.ViewPagerAdapter
 import id.ac.ukdw.data.PDFExporter
 import id.ac.ukdw.data.model.Body
+import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FilterBottomPopupBinding
 import id.ac.ukdw.drones_isai.databinding.FragmentTrenBinding
 import id.ac.ukdw.helper.DataExportable
@@ -39,7 +39,6 @@ class TrendFragment : Fragment() {
 
     private lateinit var binding: FragmentTrenBinding
     private lateinit var viewPager: ViewPager
-    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var sharedViewModel: SharedFilterViewModel
 
     private val viewModel: MainViewModel by viewModels()
@@ -49,7 +48,6 @@ class TrendFragment : Fragment() {
     private val lokasi = mutableListOf<SpinnerItem>()
     private val komoditas = mutableListOf<SpinnerItem>()
 
-    private lateinit var viewPagerAdapter: ViewPagerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -173,6 +171,10 @@ class TrendFragment : Fragment() {
                 val selectedComodity = (spinner3.selectedItem as SpinnerItem).name
                 btn.showLoading()
                 sharedViewModel.setButtonStateAndValue(true, selectedTahun,selectedLokasi,selectedComodity)
+                bottomSheetDialog.dismiss()
+            }
+            allData.setOnClickListener {
+                sharedViewModel.setButtonClearFilter(false)
                 bottomSheetDialog.dismiss()
             }
         }

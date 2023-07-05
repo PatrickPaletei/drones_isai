@@ -32,8 +32,8 @@ class BottomNavigationHelper(private val fragment: Fragment, private val navCont
         val action = when (itemId) {
             R.id.menu_cari_lokasi -> R.id.locationFragment
             R.id.menu_tren -> R.id.trenFragment
-            R.id.menu_kalkulator -> R.id.kalkulatorFragment
-            R.id.menu_about -> R.id.aboutFragment
+            R.id.menu_bantuan -> R.id.tentangKarbonFragment
+            R.id.menu_about -> R.id.tentangFragment
             else -> return
         }
 

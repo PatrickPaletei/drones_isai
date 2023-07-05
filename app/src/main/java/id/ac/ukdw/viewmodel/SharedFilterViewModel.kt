@@ -21,4 +21,7 @@ class SharedFilterViewModel : ViewModel() {
         _selectedLokasi.value = valueLokasi
         _selectedComodity.value = valueComodity
     }
+    fun setButtonClearFilter(pressed: Boolean){
+        _buttonState.value = pressed
+    }
 }

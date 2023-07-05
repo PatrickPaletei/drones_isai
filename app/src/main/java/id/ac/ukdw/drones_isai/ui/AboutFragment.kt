@@ -1,4 +1,4 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw.drones_isai.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

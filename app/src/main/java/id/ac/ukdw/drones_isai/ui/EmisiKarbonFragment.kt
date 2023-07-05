@@ -1,5 +1,6 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw.drones_isai.ui
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
@@ -20,21 +21,19 @@ import com.github.mikephil.charting.data.BarEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import id.ac.ukdw.data.DataPopulator
 import id.ac.ukdw.data.model.Body
+import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FragmentEmisiKarbonBinding
+import id.ac.ukdw.drones_isai.utils.GraphCaptureUtils
 import id.ac.ukdw.helper.DataExportable
 import id.ac.ukdw.helper.TableBuilder
 import id.ac.ukdw.viewmodel.MainViewModel
 import id.ac.ukdw.viewmodel.SharedFilterViewModel
-import java.text.SimpleDateFormat
-import java.util.Calendar
-import java.util.Locale
 
 
 class EmisiKarbonFragment : Fragment(), DataExportable{
 
     private lateinit var binding: FragmentEmisiKarbonBinding
     private lateinit var sharedViewModel: SharedFilterViewModel
-    private val dataCache: HashMap<String, List<Body>> = HashMap()
     private val viewModel: MainViewModel by viewModels()
     private var renderedTable: String = ""
     private val dataPopulator: DataPopulator = DataPopulator()
@@ -42,6 +41,7 @@ class EmisiKarbonFragment : Fragment(), DataExportable{
     private var selectedLokasi: String? = null
     private var selectedComodity: String? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,15 +50,10 @@ class EmisiKarbonFragment : Fragment(), DataExportable{
         binding = FragmentEmisiKarbonBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        val cachedData = dataCache[CACHE_KEY]
-        if (cachedData != null) {
-            setupBarChart(cachedData)
-            binding.barChart.visibility =View.VISIBLE
-        } else {
-            binding.laodBar.visibility = View.VISIBLE
-            binding.barChart.visibility =View.GONE
-            viewModel.fetchData()
-        }
+
+        binding.barChart.visibility =View.GONE
+        viewModel.fetchData()
+
         // Observe the view model's LiveData for changes
         viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
             if (responseData != null) {
@@ -110,8 +105,16 @@ class EmisiKarbonFragment : Fragment(), DataExportable{
                         }
                     }
                 }
+            }else{
+                viewModel.responseData.observe(viewLifecycleOwner){responseData ->
+                    clearChart()
+                    if (responseData != null) {
+                        setupBarChart(responseData)
+                    }
+                }
             }
         }
+
     }
     private fun clearChart() {
         val barChart: BarChart = binding.barChart
@@ -307,10 +310,6 @@ class EmisiKarbonFragment : Fragment(), DataExportable{
 
     }
 
-    companion object {
-        private const val CACHE_KEY = "karbon_terserap_fragment_cache"
-
-    }
 
     override fun getData(): String {
         return renderedTable
@@ -322,17 +321,7 @@ class EmisiKarbonFragment : Fragment(), DataExportable{
 
     private fun captureGraph(): Bitmap? {
         val graphView = binding.barChart
-
-        // Create a bitmap with the same size as the graph view
-        val bitmap = Bitmap.createBitmap(graphView.width, graphView.height, Bitmap.Config.ARGB_8888)
-
-        // Create a canvas with the bitmap
-        val canvas = Canvas(bitmap)
-
-        // Draw the graph view onto the canvas
-        graphView.draw(canvas)
-
-        return bitmap
+        return GraphCaptureUtils.captureGraph(graphView)
     }
 
 
