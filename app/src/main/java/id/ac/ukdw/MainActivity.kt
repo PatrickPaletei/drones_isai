@@ -3,21 +3,23 @@ package id.ac.ukdw
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.helper.BottomNavigationHelper
+import id.ac.ukdw.viewmodel.SharedFilterViewModel
 
 class MainActivity : AppCompatActivity() {
 
 
     private lateinit var navController: NavController
-
+    private lateinit var sharedViewModel: SharedFilterViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        sharedViewModel = ViewModelProvider(this).get(SharedFilterViewModel::class.java)
 
         val navView: BottomNavigationView = findViewById(R.id.bottomNavigationView)
         val navHostFragment =
@@ -37,11 +39,6 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
-
-    fun showBottomNavigationView() {
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-        bottomNavigationView.visibility = View.VISIBLE
-    }
 }
 
 

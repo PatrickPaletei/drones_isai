@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.TextView
-import id.ac.ukdw.drones_isai.SpinnerItem
+import id.ac.ukdw.drones_isai.ui.SpinnerItem
 
 class SpinnerFilterAdapter(context: Context, resource: Int, items: List<SpinnerItem>) :
     ArrayAdapter<SpinnerItem>(context, resource, items) {

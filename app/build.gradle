@@ -96,9 +96,10 @@ dependencies {
 
     //pdf
     implementation 'com.itextpdf:itextg:5.5.10'
-
     //lotie
     implementation 'com.airbnb.android:lottie:4.1.0'
+    //btn
+    implementation 'com.github.koushikcse:LoadingButton:1.7'
 
 
 

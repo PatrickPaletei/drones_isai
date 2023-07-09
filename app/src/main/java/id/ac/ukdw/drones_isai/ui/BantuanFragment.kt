@@ -1,21 +1,17 @@
-package id.ac.ukdw.drones_isai
+package id.ac.ukdw.drones_isai.ui
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import id.ac.ukdw.adapter.AccordionAdapter
 import id.ac.ukdw.data.AccordionItem
+import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FragmentBantuanBinding
-import id.ac.ukdw.drones_isai.databinding.FragmentKalkulatorBinding
 
 
 class BantuanFragment : Fragment() {
@@ -49,10 +45,10 @@ class BantuanFragment : Fragment() {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding.backButton.setOnClickListener {
-            findNavController().navigate(R.id.action_bantuanFragment_to_kalkulatorFragment)
-        }
-    }
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        super.onViewCreated(view, savedInstanceState)
+//        binding.backButton.setOnClickListener {
+//            findNavController().navigate(R.id.action_bantuanFragment_to_kalkulatorFragment)
+//        }
+//    }
 }

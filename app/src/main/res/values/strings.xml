@@ -39,4 +39,18 @@
     <string name="data_karbon">Data Karbon</string>
     <string name="jenis_komoditas">Jenis Komoditas</string>
     <string name="nilai_agregat">Nilai Agregat</string>
+    <string name="lokasi">Lokasi</string>
+    <string name="terapkan_filter">Terapkan Filter</string>
+    <string name="cetak">Cetak</string>
+    <string name="tampilkan_semua_data">Tampilkan semua data</string>
+    <string name="bersihkan_filer">bersihkan filer</string>
+    <string name="text_tentang">Untuk melakukan aerial imaging yang akan menjadi dasar prediksi nilai karbon pada suatu lahan.</string>
+    <string name="foto_drone">Foto Drone</string>
+    <string name="kedaireka">kedaireka</string>
+    <string name="beehive_drones">Beehive Drones</string>
+    <string name="ukdw">Universitas Kristen Duta Wacana</string>
+    <string name="fti">Fakultas Teknologi Informasi</string>
+    <string name="hubungi_kami">Hubungi Kami</string>
+    <string name="call">call</string>
+    <string name="maps">maps</string>
 </resources>

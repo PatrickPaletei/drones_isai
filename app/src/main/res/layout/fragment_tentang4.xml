@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.Tentang2Fragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="24dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/gambar_website"
+            android:contentDescription="@string/foto_drone" />
+
+        <TextView
+            android:id="@+id/website"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/bellotatext_bold"
+            android:text="@string/website_isai"
+            android:textAlignment="center"
+            android:textColor="@color/blue"
+            android:textSize="24sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bellotatext_regular"
+            android:padding="18dp"
+            android:text="@string/untuk_visualisasi_informasi_pemetaan_nilai_karbon_kalkulator_karbon_monitoring_tren_perubahan_dan_histori_nilai_karbon_yang_dapat_diakses_dengan_mudah"
+            android:textAlignment="center"
+            android:textColor="#101012"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+
+</FrameLayout>

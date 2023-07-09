@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,7 +10,7 @@
         android:layout_width="20dp"
         android:layout_height="2dp"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="3dp"
         android:background="#c0c0c0" />
 
     <TextView
@@ -48,9 +49,8 @@
             android:id="@+id/spinner_tahun"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="18dp"
             android:background="@drawable/border_outline"
-            />
+            android:padding="18dp" />
 
     </LinearLayout>
 
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/roboto_regular"
-            android:text="@string/data_karbon"
+            android:text="@string/lokasi"
             android:textColor="@color/black"
             android:textSize="16sp" />
 
@@ -74,16 +74,15 @@
             android:id="@+id/spinner_data_karbon"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="18dp"
             android:background="@drawable/border_outline"
-            android:spinnerMode="dropdown"
+            android:dropDownWidth="match_parent"
+            android:dropDownHorizontalOffset="0dp"
+            android:dropDownVerticalOffset="40dp"
             android:gravity="right"
+            android:padding="18dp"
             android:popupBackground="@color/white"
             android:popupElevation="8dp"
-            android:dropDownVerticalOffset="40dp"
-            android:dropDownHorizontalOffset="0dp"
-            android:dropDownWidth="match_parent"
-             />
+            android:spinnerMode="dropdown" />
 
     </LinearLayout>
 
@@ -106,16 +105,48 @@
             android:id="@+id/spinner_jenis_komoditas"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="18dp"
             android:background="@drawable/border_outline"
-            android:spinnerMode="dropdown"
+            android:dropDownWidth="match_parent"
+            android:dropDownHorizontalOffset="0dp"
+            android:dropDownVerticalOffset="40dp"
             android:gravity="right"
+            android:padding="18dp"
             android:popupBackground="@color/white"
             android:popupElevation="8dp"
-            android:dropDownVerticalOffset="40dp"
-            android:dropDownHorizontalOffset="0dp"
-            android:dropDownWidth="match_parent"
-            />
+            android:spinnerMode="dropdown" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:padding="20dp"
+        android:orientation="horizontal">
+
+        <com.kusu.loadingbutton.LoadingButton
+            android:id="@+id/allData"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:text="@string/bersihkan_filer"
+            android:textColor="@color/white"
+            android:layout_weight="0.5"
+            app:lb_buttonColor="@color/blue_theme"
+            app:lb_loaderColor="@color/white"
+            app:lb_shadowColor="@color/blue_light_2" />
+
+        <com.kusu.loadingbutton.LoadingButton
+            android:id="@+id/filterBtn"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:layout_marginStart="30dp"
+            android:text="@string/terapkan_filter"
+            android:textColor="@color/white"
+            app:lb_buttonColor="@color/blue_theme"
+            app:lb_loaderColor="@color/white"
+            app:lb_shadowColor="@color/blue_light_2" />
+
+    </LinearLayout>
+
 </LinearLayout>

@@ -32,11 +32,11 @@
             android:id="@+id/btn_export"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:layout_gravity="right"
-            android:layout_marginEnd="20dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="15dp"
             android:layout_marginTop="20dp"
-            android:src="@drawable/ic_export_blue"
-            android:contentDescription="@string/filter" />
+            android:src="@drawable/ic_download"
+            android:contentDescription="@string/cetak" />
 
 
     </androidx.appcompat.widget.Toolbar>
