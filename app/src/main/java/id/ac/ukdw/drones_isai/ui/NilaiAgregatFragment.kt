@@ -2,7 +2,6 @@ package id.ac.ukdw.drones_isai.ui
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -50,9 +49,9 @@ class NilaiAgregatFragment : Fragment(), DataExportable {
         binding = FragmentNilaiHSTBinding.inflate(inflater, container, false)
         val view = binding.root
 
-
-        viewModel.fetchData()
         binding.barChart.visibility = View.GONE
+        viewModel.fetchData()
+
 
         // Observe the view model's LiveData for changes
         viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
@@ -118,8 +117,6 @@ class NilaiAgregatFragment : Fragment(), DataExportable {
         }
 
     }
-
-
 
     private fun setupBarChart(
         body: List<Body>

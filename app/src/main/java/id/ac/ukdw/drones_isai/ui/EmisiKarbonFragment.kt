@@ -79,6 +79,7 @@ class EmisiKarbonFragment : Fragment(), DataExportable{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         sharedViewModel = ViewModelProvider(requireActivity())[SharedFilterViewModel::class.java]
+
     }
 
     override fun onResume() {
@@ -88,10 +89,10 @@ class EmisiKarbonFragment : Fragment(), DataExportable{
                 selectedTahun = sharedViewModel.tahunValue.value
                 selectedLokasi = sharedViewModel.lokasiValue.value
                 selectedComodity = sharedViewModel.comodityValue.value
+                clearChart()
                 viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
                     if (responseData != null) {
                         if (selectedLokasi != null && selectedComodity != null && selectedTahun != null) {
-                            clearChart()
                             setupBarChartFilter(
                                 responseData,
                                 selectedTahun!!,

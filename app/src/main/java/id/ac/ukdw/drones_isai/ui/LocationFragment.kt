@@ -1,6 +1,7 @@
 package id.ac.ukdw.drones_isai.ui
 
 import MarkerData
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +37,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentLocationBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -67,7 +68,11 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         return ::googleMap.isInitialized
 
     }
+    override fun onMapReady(gMap: GoogleMap) {
+        googleMap = gMap
+    }
 
+    @SuppressLint("InflateParams")
     override fun displayMarkers(markerList: List<MarkerData>) {
         // Your existing displayMarkers() implementation goes here
         val boundsBuilder = LatLngBounds.Builder()
@@ -85,14 +90,9 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
                 googleMap.addMarker(markerOptions)
 
                 boundsBuilder.include(
-                    LatLng(
-                        markerData.latitude,
-                        markerData.longitude
-                    )
-                )
+                    LatLng(markerData.latitude, markerData.longitude))
 
             }
-
 
         }
 
@@ -176,12 +176,10 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
             }
         })
 
-        searchView.isIconified = false
+        searchView.isIconified = true
     }
 
-    override fun onMapReady(gMap: GoogleMap) {
-        googleMap = gMap
-    }
+
 
 
 

@@ -49,9 +49,9 @@ class KarbonTerserapFragment : Fragment(), DataExportable {
         binding = FragmentKarbonTerserapBinding.inflate(inflater, container, false)
         val view = binding.root
 
-
-        viewModel.fetchData()
         binding.barChart.visibility = View.GONE
+        viewModel.fetchData()
+
         // Observe the view model's LiveData for changes
         viewModel.responseData.observe(viewLifecycleOwner) { responseData ->
             if (responseData != null) {

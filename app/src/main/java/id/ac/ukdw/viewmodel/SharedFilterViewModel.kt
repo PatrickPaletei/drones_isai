@@ -24,4 +24,18 @@ class SharedFilterViewModel : ViewModel() {
     fun setButtonClearFilter(pressed: Boolean){
         _buttonState.value = pressed
     }
+
+    fun setSelectedTahun(tahun: String) {
+        _selectedTahun.value = tahun
+    }
+
+    fun setSelectedLokasi(lokasi: String) {
+        _selectedLokasi.value = lokasi
+    }
+
+    fun setSelectedKomoditas(komoditas: String) {
+        _selectedComodity.value = komoditas
+    }
+
+
 }
