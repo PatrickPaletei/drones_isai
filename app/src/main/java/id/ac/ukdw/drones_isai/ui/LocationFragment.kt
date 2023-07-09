@@ -3,6 +3,7 @@ package id.ac.ukdw.drones_isai.ui
 import MarkerData
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,10 +75,10 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
 
     @SuppressLint("InflateParams")
     override fun displayMarkers(markerList: List<MarkerData>) {
-        // Your existing displayMarkers() implementation goes here
         val boundsBuilder = LatLngBounds.Builder()
-
+        Log.d("marker", "displayMarkers: $markerList")
         for (markerData in markerList) {
+
             if (markerData.latitude != 0.0 && markerData.longitude != 0.0
                 && markerData.komoditas != "null" && markerData.namaLahan != "null"
                 && markerData.karbonTanah != "null" && markerData.karbonTanaman != "null"
@@ -85,8 +86,6 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
             ) {
                 val markerOptions = MarkerOptions()
                     .position(LatLng(markerData.latitude, markerData.longitude))
-                    .title(markerData.title)
-                    .snippet(markerData.snippet)
                 googleMap.addMarker(markerOptions)
 
                 boundsBuilder.include(
@@ -140,8 +139,6 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         for (markerData in filteredMarkers) {
             val markerOptions = MarkerOptions()
                 .position(LatLng(markerData.latitude, markerData.longitude))
-                .title(markerData.title)
-                .snippet(markerData.snippet)
             googleMap.addMarker(markerOptions)
         }
 

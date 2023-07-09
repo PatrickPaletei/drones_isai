@@ -1,8 +1,6 @@
 data class MarkerData(
     val latitude: Double,
     val longitude: Double,
-    val title:String,
-    val snippet:String,
     val KodeSampel:String,
     val namaLahan:String,
     val komoditas:String,

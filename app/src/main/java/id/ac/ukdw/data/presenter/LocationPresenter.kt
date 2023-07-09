@@ -56,14 +56,11 @@ class LocationPresenter(private val view: LocationView) {
     private fun processMarkers(coordinat: List<Body>) {
         for (i in coordinat) {
 
-
             val marker = MarkerData(
                 i?.long?.toDouble() ?: 0.0,  // Provide default latitude if i or i.long is null
                 i?.lat?.toDouble() ?: 0.0,  // Provide default longitude if i or i.lat is null
-                "marker",
-                "snip",
                 i?.idSample ?: "null",  // Provide "null" string value if i or i.idSample is null
-                "Lahan ${i?.loc ?: "null"}",  // Provide "lahan null" string value if i or i.loc is null
+                i?.loc ?: "null",  // Provide "lahan null" string value if i or i.loc is null
                 i?.comodity ?: "null",  // Provide "null" string value if i or i.comodity is null
                 i?.date ?: "null",  // Provide "null" string value if i or i.date is null
                 i?.carbonTanah
@@ -71,7 +68,6 @@ class LocationPresenter(private val view: LocationView) {
                 i?.carbonTanaman
                     ?: "null"  // Provide "null" string value if i or i.carbonTanaman is null
             )
-
             markerList.add(marker)
 
         }
@@ -81,7 +77,6 @@ class LocationPresenter(private val view: LocationView) {
     private fun checkDataAndMapReady() {
         if (dataLoaded && view.isMapReady()) {
             view.displayMarkers(markerList)
-
         }
     }
 

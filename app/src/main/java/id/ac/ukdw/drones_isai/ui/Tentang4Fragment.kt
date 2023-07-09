@@ -24,7 +24,7 @@ class Tentang4Fragment : Fragment() {
         val view = binding.root
 
         binding.website.setOnClickListener {
-            val websiteUrl = "https://www.google.com"
+            val websiteUrl = "https://kedaireka1.fti.ukdw.ac.id/"
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(websiteUrl))
             startActivity(intent)
         }
