@@ -8,8 +8,7 @@ class TableBuilder {
             xAxisLabels: List<String>,
             rowTemplate: String,
             vararg barEntries: List<BarEntry>
-        ): String
-        {
+        ): String {
             val tableBuilder = StringBuilder()
 
             // Create table headers
@@ -41,7 +40,7 @@ class TableBuilder {
                     "5" -> "Mei"
                     "6" -> "Juni"
                     "7" -> "Juli"
-                    "8" -> "Augustus"
+                    "8" -> "Agustus"
                     "9" -> "September"
                     "10" -> "Oktober"
                     "11" -> "November"
@@ -50,11 +49,11 @@ class TableBuilder {
                 }
 
                 val rowBuilder = StringBuilder()
-                rowBuilder.append("|  $label  ")
+                rowBuilder.append("|  ${label.padEnd(9)}")
 
                 for (element in barEntries) {
                     val value = element[i].y.toString()
-                    rowBuilder.append("|  $value  ")
+                    rowBuilder.append("|  ${value.padEnd(9)}")
                 }
 
                 rowBuilder.append("|\n")
@@ -71,5 +70,9 @@ class TableBuilder {
         }
     }
 }
+
+
+
+
 
 

@@ -30,8 +30,13 @@ class TentangKarbonFragment : Fragment() {
         accordionRecyclerView = view.findViewById(R.id.recycler_view)
         accordionRecyclerView.layoutManager = LinearLayoutManager(context)
         val accordionItem = listOf(
-            AccordionItem("Apa itu karbon tanah?","Karbon tanah organik (SOC=soil organic carbon) menurut Nishina, et al. (2013) merupakan stok karbon terbesar di ekosistem darat dan memainkan peran kunci dalam umpan balik biosfir untuk peningkatan karbon dioksida atmosfer di dunia, sehingga atmosfir bumi akan menjadi lebih hangat.") ,
-            AccordionItem("Mengapa karbon itu peting?","Karbon merupakan unsur dasar dari molekul-molekul penting penyusun kehidupan seperti karbohidrat, protein, lemak dan DNA. Karbon berperan sebagai thermostat alami dalam kehidupan dan salah satu penyusun gas-gas rumah kaca di atmosfer.")
+            AccordionItem("Apa yang dimaksud dengan karbon?","Karbon berasal dari bahasa Latin yaitu carbo yang artinya arang, batu bara. Secara kimia, carbon adalah unsur kimia yang memiliki simbol C dengan urutan nomor atom 6 pada tabel periodik. Definisi lain menyebutkan, carbon adalah suatu unsur yang diserap dari atmosfer melalui proses fotosintesis dan disimpan di dalam bentuk biomassa suatu vegetasi.") ,
+            AccordionItem("Apa yang dimaksud dengan emisi karbon?","Emisi karbon merupakan proses pelepasan gas-gas yang mengandung karbon ke atmosfer yang terjadi secara alami maupun dipicu aktivitas manusia, seperti deforestasi, konsumsi listrik, hingga kegiatan industri manufaktur."),
+            AccordionItem("Apa dampak positif karbon?","1. Dasar Kehidupan: Karbon membentuk molekul organik yang penting untuk kehidupan, seperti protein, karbohidrat, lemak, dan asam nukleat. Tanpa karbon, kehidupan seperti yang kita kenal tidak akan mungkin ada.\n" +
+                    "2. Sumber Energi: Bahan bakar fosil, yang terdiri dari karbon, telah menjadi sumber energi utama selama berabad-abad. Penggunaan bahan bakar fosil telah memberikan energi yang diperlukan untuk menggerakkan kendaraan, pembangkit listrik, dan industri."),
+            AccordionItem("Apa dampak negatif karbon?","1. Pemanasan Global: Emisi karbon, terutama dalam bentuk karbon dioksida (CO2) dari pembakaran bahan bakar fosil dan deforestasi, menyebabkan peningkatan konsentrasi gas rumah kaca di atmosfer.\n" +
+                    "2. Pencemaran Udara: Pembakaran bahan bakar fosil menghasilkan emisi karbon monoksida (CO) dan partikel-partikel lain yang dapat mencemari udara. Polusi udara ini dapat menyebabkan masalah kesehatan manusia, seperti penyakit pernapasan dan masalah kardiovaskular.\n" +
+                    "3. Kerusakan Lingkungan: Ekstraksi dan penggunaan bahan bakar fosil, yang mengandung karbon, dapat menyebabkan kerusakan lingkungan. Ini termasuk kerusakan ekosistem, deforestasi, degradasi tanah, dan kerusakan habitat alami, yang memiliki dampak negatif pada keanekaragaman hayati dan keberlanjutan lingkungan.")
         )
         val adapter = AccordionAdapter(accordionItem)
         accordionRecyclerView.adapter = adapter

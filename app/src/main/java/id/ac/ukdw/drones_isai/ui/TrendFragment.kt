@@ -24,7 +24,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import id.ac.ukdw.adapter.SpinnerFilterAdapter
 import id.ac.ukdw.adapter.ViewPagerAdapter
-import id.ac.ukdw.data.PDFExporter
+import id.ac.ukdw.helper.PDFExporter
 import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FilterBottomPopupBinding
@@ -47,6 +47,9 @@ class TrendFragment : Fragment() {
     private val tahun = mutableListOf<SpinnerItem>()
     private val lokasi = mutableListOf<SpinnerItem>()
     private val komoditas = mutableListOf<SpinnerItem>()
+    private var selectedTahun: String? = null
+    private var selectedLokasi: String? = null
+    private var selectedComodity: String? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +88,17 @@ class TrendFragment : Fragment() {
             exportDataToPDF()
         }
         getSpinnerData()
+        sharedViewModel.buttonState.observe(viewLifecycleOwner){isPressed ->
+            if (isPressed){
+                selectedTahun = sharedViewModel.tahunValue.value
+                selectedLokasi = sharedViewModel.lokasiValue.value
+                selectedComodity = sharedViewModel.comodityValue.value
+                val filter = "$selectedTahun $selectedLokasi $selectedComodity"
+                binding.filterAktif.text = filter
+            }else{
+                binding.filterAktif.text = "Semua"
+            }
+        }
 
 
         return view
@@ -164,18 +178,40 @@ class TrendFragment : Fragment() {
         spinner3Adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         spinner3.adapter = spinner3Adapter
 
+        // Set the selected values of the spinners if they were previously selected
+        sharedViewModel.tahunValue.value?.let { selectedTahun ->
+            val selectedTahunIndex = tahun.indexOfFirst { it.name == selectedTahun }
+            if (selectedTahunIndex != -1) {
+                spinner1.setSelection(selectedTahunIndex)
+            }
+        }
+
+        sharedViewModel.lokasiValue.value?.let { selectedLokasi ->
+            val selectedLokasiIndex = lokasi.indexOfFirst { it.name == selectedLokasi }
+            if (selectedLokasiIndex != -1) {
+                spinner2.setSelection(selectedLokasiIndex)
+            }
+        }
+
+        sharedViewModel.comodityValue.value?.let { selectedKomoditas ->
+            val selectedKomoditasIndex = komoditas.indexOfFirst { it.name == selectedKomoditas }
+            if (selectedKomoditasIndex != -1) {
+                spinner3.setSelection(selectedKomoditasIndex)
+            }
+        }
+
         val btn = dialogBinding.filterBtn
         dialogBinding.apply {
             filterBtn.setOnClickListener {
                 val selectedTahun = (spinner1.selectedItem as SpinnerItem).name
                 val selectedLokasi = (spinner2.selectedItem as SpinnerItem).name
-                val selectedComodity = (spinner3.selectedItem as SpinnerItem).name
+                val selectedKomoditas = (spinner3.selectedItem as SpinnerItem).name
                 btn.showLoading()
                 sharedViewModel.setButtonStateAndValue(
                     true,
                     selectedTahun,
                     selectedLokasi,
-                    selectedComodity
+                    selectedKomoditas
                 )
                 bottomSheetDialog.dismiss()
             }
@@ -216,9 +252,11 @@ class TrendFragment : Fragment() {
                 // Handle case where nothing is selected
             }
         }
+
         // Show the bottom sheet dialog
         bottomSheetDialog.show()
     }
+
 
 
     @RequiresApi(Build.VERSION_CODES.Q)

@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:text="Bantuan"
             android:textColor="@color/black"
-            android:fontFamily="@font/roboto_regular"
+            android:fontFamily="@font/bellotatext_regular"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_centerInParent="true" />
