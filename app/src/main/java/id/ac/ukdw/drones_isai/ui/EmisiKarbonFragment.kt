@@ -2,7 +2,6 @@ package id.ac.ukdw.drones_isai.ui
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater

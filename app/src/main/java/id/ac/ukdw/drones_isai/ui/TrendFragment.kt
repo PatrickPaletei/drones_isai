@@ -13,8 +13,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -32,6 +34,7 @@ import id.ac.ukdw.drones_isai.databinding.FragmentTrenBinding
 import id.ac.ukdw.helper.DataExportable
 import id.ac.ukdw.viewmodel.MainViewModel
 import id.ac.ukdw.viewmodel.SharedFilterViewModel
+import java.io.FileOutputStream
 import java.io.IOException
 
 
@@ -257,8 +260,6 @@ class TrendFragment : Fragment() {
         bottomSheetDialog.show()
     }
 
-
-
     @RequiresApi(Build.VERSION_CODES.Q)
     private fun exportDataToPDF() {
         val dataFragments = mutableListOf<DataExportable>()
@@ -272,38 +273,73 @@ class TrendFragment : Fragment() {
         if (dataFragments.isNotEmpty()) {
             val pdfExporter = PDFExporter()
 
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, "my_pdf_file.pdf")
-                put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
-                put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
-            }
+            val inputFileName = "my_pdf_file.pdf" // Default file name
 
-            val resolver = requireContext().contentResolver
-            val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+            val builder = AlertDialog.Builder(requireContext())
 
-            uri?.let { pdfUri ->
-                try {
-                    val outputStream = resolver.openOutputStream(pdfUri)
-                    outputStream?.use { outputStream ->
-                        pdfExporter.exportToPDF(outputStream, dataFragments)
-                        Toast.makeText(
-                            requireContext(),
-                            "PDF exported successfully",
-                            Toast.LENGTH_SHORT
-                        ).show()
+            // Inflate the custom layout with padding
+            val customLayout = LayoutInflater.from(requireContext()).inflate(
+                R.layout.save_dialog_layout,
+                null
+            )
 
-                        // Open the PDF using a dialog
-                        openPDFWithDialog(pdfUri)
+            val input = customLayout.findViewById<EditText>(R.id.editTextFileName)
+
+            builder.setTitle("Save As")
+                .setView(customLayout)
+                .setPositiveButton("Save") { _, _ ->
+                    val userInputFileName = input.text.toString()
+                    val pdfFileName = if (userInputFileName.isNotBlank()) {
+                        "$userInputFileName.pdf"
+                    } else {
+                        inputFileName
                     }
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                    Toast.makeText(requireContext(), "Failed to export PDF", Toast.LENGTH_SHORT)
-                        .show()
+
+                    val contentValues = ContentValues().apply {
+                        put(MediaStore.MediaColumns.DISPLAY_NAME, pdfFileName)
+                        put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
+                        put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                    }
+
+                    val resolver = requireContext().contentResolver
+
+                    try {
+                        // Use ContentResolver to create a new PDF file
+                        val pdfUri =
+                            resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
+
+                        pdfUri?.let { uri ->
+                            resolver.openFileDescriptor(uri, "w")?.use { descriptor ->
+                                // Open an OutputStream using the file descriptor
+                                val outputStream = FileOutputStream(descriptor.fileDescriptor)
+
+                                pdfExporter.exportToPDF(outputStream, dataFragments)
+                                Toast.makeText(
+                                    requireContext(),
+                                    "PDF exported successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                // Open the PDF using a dialog
+                                openPDFWithDialog(uri)
+                            }
+                        } ?: run {
+                            Toast.makeText(
+                                requireContext(),
+                                "Failed to create PDF file",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        Toast.makeText(requireContext(), "Failed to export PDF", Toast.LENGTH_SHORT)
+                            .show()
+                    }
                 }
-            } ?: run {
-                Toast.makeText(requireContext(), "Failed to create PDF file", Toast.LENGTH_SHORT)
-                    .show()
-            }
+                .setNegativeButton("Cancel") { dialog, _ ->
+                    dialog.cancel()
+                }
+
+            builder.show()
         }
     }
 
