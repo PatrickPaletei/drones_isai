@@ -6,12 +6,16 @@
     app:startDestination="@id/tentangFragment">
     <fragment
         android:id="@+id/locationFragment"
-        android:name="id.ac.ukdw.drones_isai.ui.LocationFragment"
+        android:name="id.ac.ukdw.drones_isai.ui.Location.LocationFragment"
         android:label="fragment_location"
-        tools:layout="@layout/fragment_location" />
+        tools:layout="@layout/fragment_location" >
+        <argument
+            android:name="idLocation"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/trenFragment"
-        android:name="id.ac.ukdw.drones_isai.ui.TrendFragment"
+        android:name="id.ac.ukdw.drones_isai.ui.tren.TrendFragment"
         android:label="fragment_tren"
         tools:layout="@layout/fragment_tren" />
     <fragment
@@ -20,7 +24,7 @@
         android:label="TentangKarbonFragment" />
     <fragment
         android:id="@+id/tentangFragment"
-        android:name="id.ac.ukdw.drones_isai.ui.TentangFragment"
+        android:name="id.ac.ukdw.drones_isai.ui.tentang.TentangFragment"
         android:label="TentangFragment" >
         <action
             android:id="@+id/action_tentangFragment_to_tentangKarbonFragment2"

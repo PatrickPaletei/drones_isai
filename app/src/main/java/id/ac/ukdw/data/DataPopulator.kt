@@ -28,11 +28,15 @@ class DataPopulator {
                 calendar.time = parsedDate
                 val month = calendar.get(Calendar.MONTH) + 1
 
-                val value = "$carbonTanaman $carbonTanah $emisiTanaman $emisiTanah $emisiLingkungan $komoditas $lokasi"
-                if (mapData.containsKey(month)) {
-                    mapData[month]?.add(value)
-                } else {
-                    mapData[month] = mutableListOf(value)
+                // Exclude items where any of the specified fields is null
+                if (carbonTanaman != null && carbonTanah != null && emisiTanaman != null
+                    && emisiTanah != null && emisiLingkungan != null) {
+                    val value = "$carbonTanaman $carbonTanah $emisiTanaman $emisiTanah $emisiLingkungan $komoditas $lokasi"
+                    if (mapData.containsKey(month)) {
+                        mapData[month]?.add(value)
+                    } else {
+                        mapData[month] = mutableListOf(value)
+                    }
                 }
             }
         }
@@ -53,7 +57,6 @@ class DataPopulator {
         selectedLokasi: String?
     ): MutableMap<Int, MutableList<String>> {
 
-
         val mapData = mutableMapOf<Int, MutableList<String>>()
 
         for (item in body) {
@@ -69,22 +72,27 @@ class DataPopulator {
             val calendar = Calendar.getInstance()
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.US)
             val parsedDate = dateFormat.parse(date)
+
             if (parsedDate != null) {
                 calendar.time = parsedDate
                 val year = calendar.get(Calendar.YEAR)
                 val month = calendar.get(Calendar.MONTH) + 1
 
-                // Apply filtering if the flag is enabled
-                if (!filterEnabled || (selectedYear == null || year == selectedYear)
-                    && (selectedKomoditas == null || komoditas == selectedKomoditas)
-                    && (selectedLokasi == null || lokasi == selectedLokasi)
-                ) {
-                    val value =
-                        "$carbonTanaman $carbonTanah $emisiTanaman $emisiTanah $emisiLingkungan"
-                    if (mapData.containsKey(month)) {
-                        mapData[month]?.add(value)
-                    } else {
-                        mapData[month] = mutableListOf(value)
+                // Exclude items where any of the specified fields is null
+                if (!listOf(carbonTanaman, carbonTanah, emisiTanaman, emisiTanah, emisiLingkungan)
+                        .any { it == null }) {
+
+                    // Apply additional filtering if the flag is enabled
+                    if (!filterEnabled || (selectedYear == null || year == selectedYear)
+                        && (selectedKomoditas == null || komoditas == selectedKomoditas)
+                        && (selectedLokasi == null || lokasi == selectedLokasi)
+                    ) {
+                        val value = "$carbonTanaman $carbonTanah $emisiTanaman $emisiTanah $emisiLingkungan"
+                        if (mapData.containsKey(month)) {
+                            mapData[month]?.add(value)
+                        } else {
+                            mapData[month] = mutableListOf(value)
+                        }
                     }
                 }
             }

@@ -7,8 +7,11 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import id.ac.ukdw.drones_isai.R
 
 class BottomNavigationHelper(private val fragment: Fragment, private val navController: NavController) {
+
+    // Add a property to store the current destination ID
+    private var currentDestinationId: Int = 0
     fun setupWithBottomNavigationView(bottomNavigationView: BottomNavigationView) {
-        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
             navigateToDestination(menuItem.itemId)
             true
         }
@@ -22,10 +25,14 @@ class BottomNavigationHelper(private val fragment: Fragment, private val navCont
         // Listen for changes in the selected destination
         navController.addOnDestinationChangedListener { _, destination, _ ->
             bottomNavigationView.selectedItemId = destination.id
+            currentDestinationId = destination.id
+
+            // Set the highlighted item based on the current destination
+            setHighlightedItem(bottomNavigationView, currentDestinationId)
         }
     }
-    fun setHighlightedItem(bottomNavigationView: BottomNavigationView, itemId: Int) {
-        bottomNavigationView.menu.findItem(itemId)?.isChecked = true
+    fun setHighlightedItem(bottomNavigationView: BottomNavigationView, destinationId: Int) {
+        bottomNavigationView.menu.findItem(getMenuItemId(destinationId))?.isChecked = true
     }
 
     private fun navigateToDestination(itemId: Int) {
@@ -39,4 +46,14 @@ class BottomNavigationHelper(private val fragment: Fragment, private val navCont
 
         fragment.findNavController().navigate(action)
     }
+    private fun getMenuItemId(destinationId: Int): Int {
+        return when (destinationId) {
+            R.id.locationFragment -> R.id.menu_cari_lokasi
+            R.id.trenFragment -> R.id.menu_tren
+            R.id.tentangKarbonFragment -> R.id.menu_bantuan
+            R.id.tentangFragment -> R.id.menu_about
+            else -> 0 // Handle other cases if needed
+        }
+    }
+
 }

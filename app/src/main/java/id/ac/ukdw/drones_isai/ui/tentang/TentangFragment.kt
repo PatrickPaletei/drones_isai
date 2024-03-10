@@ -1,4 +1,4 @@
-package id.ac.ukdw.drones_isai.ui
+package id.ac.ukdw.drones_isai.ui.tentang
 
 import android.os.Bundle
 import android.os.Handler

@@ -1,5 +1,6 @@
 package id.ac.ukdw.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -44,6 +45,7 @@ class MainViewModel : ViewModel() {
                     if (statusCode == 200) {
                         if (body != null) {
                             val responseData = body.body
+                            Log.d("dataMainVM", "fetchData: $responseData")
                             dataCache[CACHE_KEY] = responseData
                             _responseData.value = responseData
                         }

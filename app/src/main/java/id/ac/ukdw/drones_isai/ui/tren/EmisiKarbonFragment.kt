@@ -1,4 +1,4 @@
-package id.ac.ukdw.drones_isai.ui
+package id.ac.ukdw.drones_isai.ui.tren
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap

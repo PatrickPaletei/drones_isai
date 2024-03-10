@@ -8,7 +8,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 object ApiClient {
     //base url api
     const val BASE_URL = "https://sk695s0owe.execute-api.us-east-1.amazonaws.com/"
-    const val BASE_URL_NEW = "https://f7p2q26auk56oxdvp2sjaf6ioy0sximk.lambda-url.us-east-1.on.aws"
 
     private val logging: HttpLoggingInterceptor
         get() {
@@ -29,16 +28,6 @@ object ApiClient {
                 ).build()
         retrofit.create(ApiService::class.java)
     }
-    private val client2 = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .build()
-    val instance2: ApiService by lazy {
-        val retrofit =
-            Retrofit.Builder().baseUrl(BASE_URL_NEW).addConverterFactory(GsonConverterFactory.create())
-                .client(
-                    client
-                ).build()
-        retrofit.create(ApiService::class.java)
-    }
+
 
 }

@@ -1,4 +1,5 @@
-package id.ac.ukdw.drones_isai.ui
+package id.ac.ukdw.drones_isai.ui.Location
+
 
 import MarkerData
 import android.annotation.SuppressLint
@@ -18,8 +19,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
-
-
 import id.ac.ukdw.data.presenter.LocationPresenter
 import id.ac.ukdw.data.presenter.LocationView
 import id.ac.ukdw.drones_isai.R
@@ -40,12 +39,12 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLocationBinding.inflate(inflater, container, false)
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         presenter = LocationPresenter(this)
         val mapFragment =
             childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
@@ -69,12 +68,21 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         return ::googleMap.isInitialized
 
     }
+
     override fun onMapReady(gMap: GoogleMap) {
         googleMap = gMap
     }
 
     @SuppressLint("InflateParams")
     override fun displayMarkers(markerList: List<MarkerData>) {
+
+        // Filter the markerList based on locationId
+
+        val locationId = arguments?.getString("locationId")
+        val dateService = arguments?.getString("dateService")
+        Log.d("idLOcationFrag", "displayMarkers: $locationId")
+        val filteredMarkers = markerList.filter { it.KodeSampel == locationId && it.tglSampel == dateService}
+
         val boundsBuilder = LatLngBounds.Builder()
         Log.d("marker", "displayMarkers: $markerList")
         for (markerData in markerList) {
@@ -89,7 +97,8 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
                 googleMap.addMarker(markerOptions)
 
                 boundsBuilder.include(
-                    LatLng(markerData.latitude, markerData.longitude))
+                    LatLng(markerData.latitude, markerData.longitude)
+                )
 
             }
 
@@ -107,29 +116,38 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
             }
 
             if (markerData != null) {
-                val bottomSheetDialog = BottomSheetDialog(requireContext())
-                val view = layoutInflater.inflate(R.layout.layout_popup_dialog, null)
-
-                val kodeSampelTextView = view.findViewById<TextView>(R.id.kode_sample)
-                val namaLahanTextView = view.findViewById<TextView>(R.id.kode_lahan)
-                val komoditasTextView = view.findViewById<TextView>(R.id.komoditas)
-                val tglSampelTextView = view.findViewById<TextView>(R.id.tanggal_sampling)
-                val karbonTanahTextView = view.findViewById<TextView>(R.id.karbonTanah)
-                val karbonTanamahTextView = view.findViewById<TextView>(R.id.karbon_tanaman)
-
-                kodeSampelTextView.text = markerData.KodeSampel
-                namaLahanTextView.text = markerData.namaLahan
-                komoditasTextView.text = markerData.komoditas
-                tglSampelTextView.text = markerData.tglSampel
-                karbonTanahTextView.text = markerData.karbonTanah
-                karbonTanamahTextView.text = markerData.karbonTanah
-
-                bottomSheetDialog.setContentView(view)
-                bottomSheetDialog.show()
+                showBottomDialog(markerData)
             }
 
             true
         }
+//        // Show the bottom dialog for the matching MarkerData
+        if (locationId != null && filteredMarkers.isNotEmpty()) {
+            val matchingMarkerData = filteredMarkers.first()
+            showBottomDialog(matchingMarkerData)
+        }
+    }
+
+    private fun showBottomDialog(markerData: MarkerData) {
+        val bottomSheetDialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.layout_popup_dialog, null)
+
+        val kodeSampelTextView = view.findViewById<TextView>(R.id.kode_sample)
+        val namaLahanTextView = view.findViewById<TextView>(R.id.kode_lahan)
+        val komoditasTextView = view.findViewById<TextView>(R.id.komoditas)
+        val tglSampelTextView = view.findViewById<TextView>(R.id.tanggal_sampling)
+        val karbonTanahTextView = view.findViewById<TextView>(R.id.karbonTanah)
+        val karbonTanamahTextView = view.findViewById<TextView>(R.id.karbon_tanaman)
+
+        kodeSampelTextView.text = markerData.KodeSampel
+        namaLahanTextView.text = markerData.namaLahan
+        komoditasTextView.text = markerData.komoditas
+        tglSampelTextView.text = markerData.tglSampel
+        karbonTanahTextView.text = markerData.karbonTanah
+        karbonTanamahTextView.text = markerData.karbonTanah
+
+        bottomSheetDialog.setContentView(view)
+        bottomSheetDialog.show()
     }
 
     override fun updateMarkers(filteredMarkers: List<MarkerData>) {
@@ -154,11 +172,6 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         }
     }
 
-
-
-
-    // Other methods in LocationFragment
-
     private fun setupSearchView() {
         searchView = binding.searchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -175,9 +188,6 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
 
         searchView.isIconified = true
     }
-
-
-
 
 
 }
