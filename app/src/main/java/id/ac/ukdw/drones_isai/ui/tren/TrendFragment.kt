@@ -1,14 +1,17 @@
-package id.ac.ukdw.drones_isai.ui
+package id.ac.ukdw.drones_isai.ui.tren
 
 
 import android.content.ActivityNotFoundException
 import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +26,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.tabs.TabLayoutMediator
 import id.ac.ukdw.adapter.SpinnerFilterAdapter
 import id.ac.ukdw.adapter.ViewPagerAdapter
 import id.ac.ukdw.helper.PDFExporter
@@ -31,11 +36,15 @@ import id.ac.ukdw.data.model.Body
 import id.ac.ukdw.drones_isai.R
 import id.ac.ukdw.drones_isai.databinding.FilterBottomPopupBinding
 import id.ac.ukdw.drones_isai.databinding.FragmentTrenBinding
+import id.ac.ukdw.drones_isai.utils.GraphCaptureUtils
 import id.ac.ukdw.helper.DataExportable
 import id.ac.ukdw.viewmodel.MainViewModel
 import id.ac.ukdw.viewmodel.SharedFilterViewModel
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 
 data class SpinnerItem(val id: Int, val name: String)

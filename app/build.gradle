@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "id.ac.ukdw.drones_isai"
-        minSdk 22
+        minSdk 24
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -79,7 +79,7 @@ dependencies {
 
     //maps
     implementation 'com.google.android.gms:play-services-maps:17.0.1'
-    implementation 'com.google.android.gms:play-services-location:18.0.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.0'
 
     //chart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
@@ -101,6 +101,9 @@ dependencies {
     //btn
     implementation 'com.github.koushikcse:LoadingButton:1.7'
 
+    implementation("org.greenrobot:eventbus:3.3.1")
+
+    implementation "androidx.work:work-runtime:2.8.1"
 
 
 

@@ -1,4 +1,4 @@
-package id.ac.ukdw.drones_isai.ui
+package id.ac.ukdw.drones_isai.ui.tren
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
@@ -27,6 +27,7 @@ import id.ac.ukdw.helper.DataExportable
 import id.ac.ukdw.helper.TableBuilder
 import id.ac.ukdw.viewmodel.MainViewModel
 import id.ac.ukdw.viewmodel.SharedFilterViewModel
+import id.ac.ukdw.viewmodel.TrenViewModel
 
 
 class NilaiAgregatFragment : Fragment(), DataExportable {

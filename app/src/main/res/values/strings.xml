@@ -54,4 +54,7 @@
     <string name="call">call</string>
     <string name="maps">maps</string>
     <string name="menampilkan_data">Menampilkan data :</string>
+    <string name="masukan_nama_file">Masukan Nama File:</string>
+    <string name="nama_file">Nama File</string>
+    <string name="tampilkan_lokasi_di_ar">Tampilkan Lokasi Di AR</string>
 </resources>

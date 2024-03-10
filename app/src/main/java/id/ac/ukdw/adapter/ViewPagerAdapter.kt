@@ -1,13 +1,15 @@
 package id.ac.ukdw.adapter
 
+
 import android.util.SparseArray
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import id.ac.ukdw.drones_isai.ui.EmisiKarbonFragment
-import id.ac.ukdw.drones_isai.ui.KarbonTerserapFragment
-import id.ac.ukdw.drones_isai.ui.NilaiAgregatFragment
+import id.ac.ukdw.drones_isai.ui.tren.EmisiKarbonFragment
+import id.ac.ukdw.drones_isai.ui.tren.KarbonTerserapFragment
+import id.ac.ukdw.drones_isai.ui.tren.NilaiAgregatFragment
+
 
 class ViewPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     private val instantiatedFragments: SparseArray<Fragment> = SparseArray()

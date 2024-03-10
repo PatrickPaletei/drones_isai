@@ -36,10 +36,10 @@ data class Body(
     val loc: String,
     @SerializedName("long")
     val long: String,
-    @SerializedName("NewValue")
-    val newValue: String,
-    @SerializedName("NewValue1")
-    val newValue1: String,
-    @SerializedName("NewValue2")
-    val newValue2: String
+//    @SerializedName("NewValue")
+//    val newValue: String,
+//    @SerializedName("NewValue1")
+//    val newValue1: String,
+//    @SerializedName("NewValue2")
+//    val newValue2: String
 )

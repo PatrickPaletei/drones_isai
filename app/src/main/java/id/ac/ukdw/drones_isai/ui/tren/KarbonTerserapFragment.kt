@@ -1,7 +1,8 @@
-package id.ac.ukdw.drones_isai.ui
+package id.ac.ukdw.drones_isai.ui.tren
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -298,7 +299,5 @@ class KarbonTerserapFragment : Fragment(), DataExportable {
         val graphView = binding.barChart
         return GraphCaptureUtils.captureGraph(graphView)
     }
-
-
 
 }

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nilaiHSTFragment"
-        android:name="id.ac.ukdw.drones_isai.ui.NilaiAgregatFragment"
+        android:name="id.ac.ukdw.drones_isai.ui.tren.NilaiAgregatFragment"
         android:label="fragment_nilai_h_s_t"
         tools:layout="@layout/fragment_nilai_h_s_t" >
         <action

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- res/layout/custom_dialog_layout.xml -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -10,12 +9,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Masukan Nama File:" />
+        android:text="@string/masukan_nama_file" />
 
     <EditText
         android:id="@+id/editTextFileName"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:hint="Nama File (without extension)" />
+    android:hint="@string/nama_file" />
 
 </LinearLayout>
