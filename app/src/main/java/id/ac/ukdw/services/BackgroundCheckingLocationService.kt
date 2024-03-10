@@ -45,16 +45,16 @@ class BackgroundCheckingLocationService : Service() {
     fun receiveLocationEvent(locationEvent: LocationEvent) {
         val lat = locationEvent.latitude
         val long = locationEvent.longitude
-
+        Log.d("latlongskrng", "receiveLocationEvent: $lat $long")
         if (lat != null && long != null) {
             notificationViewModel.filteredData.observeForever { filteredData ->
 
                 for (location in filteredData) {
                     val distance = distance(lat, long, location.lattitude, location.longitude)
-//                    val distance = distance(-7.762693512478539, 110.395069767286,-7.762693512478539, 110.395069767286)
-
+//                    val distance = distance(lat, long,-7.762767926089384, 110.39511268262554)
+                    Log.d("disSer", "receiveLocationEvent: $distance")
                     // Adjust the threshold as needed
-                    val distanceThreshold = 0.1 // Set your distance threshold here in kilometers
+                    val distanceThreshold = 4 // Set your distance threshold here in kilometers
 
                     if (distance <= distanceThreshold) {
                         // Location is within range, create and show a notification
