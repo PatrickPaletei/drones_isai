@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.Location.LocationFragment">
+    tools:context=".ui.location.LocationFragment">
 
 
     <fragment
@@ -20,7 +20,7 @@
         android:layout_margin="25dp"
         android:layout_marginTop="?attr/actionBarSize"
         android:background="@drawable/rounded_search_view_background"
-        android:queryHint="Cari Lokasi"
+        android:queryHint="Cari..."
         android:theme="@style/SearchViewStyle"
         android:iconifiedByDefault="false" />
 

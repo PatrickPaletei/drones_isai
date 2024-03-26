@@ -1,4 +1,4 @@
-package id.ac.ukdw.drones_isai.ui.Location
+package id.ac.ukdw.drones_isai.ui.location
 
 
 import MarkerData
@@ -8,6 +8,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.SearchView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -59,6 +61,7 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
                 googleMap.mapType = GoogleMap.MAP_TYPE_NORMAL
             }
         }
+
     }
 
 
@@ -128,10 +131,12 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         }
     }
 
+    @SuppressLint("InflateParams")
     private fun showBottomDialog(markerData: MarkerData) {
         val bottomSheetDialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.layout_popup_dialog, null)
 
+        val openMaps = view.findViewById<ImageView>(R.id.open_maps)
         val kodeSampelTextView = view.findViewById<TextView>(R.id.kode_sample)
         val namaLahanTextView = view.findViewById<TextView>(R.id.kode_lahan)
         val komoditasTextView = view.findViewById<TextView>(R.id.komoditas)
@@ -147,8 +152,28 @@ class LocationFragment : Fragment(), OnMapReadyCallback, LocationView {
         karbonTanamahTextView.text = markerData.karbonTanah
 
         bottomSheetDialog.setContentView(view)
-        bottomSheetDialog.show()
+
+        // Define the camera position and zoom level
+        val markerPosition = LatLng(markerData.latitude, markerData.longitude)
+        val zoomLevel = 19f // Adjust the zoom level as needed
+
+        // Move the camera to the marker's position with zoom
+        val cameraUpdate = CameraUpdateFactory.newLatLngZoom(markerPosition, zoomLevel)
+        googleMap.animateCamera(cameraUpdate, object : GoogleMap.CancelableCallback {
+            override fun onFinish() {
+                bottomSheetDialog.show()
+            }
+
+            override fun onCancel() {
+                // Handle cancellation if needed
+            }
+        })
+
+
     }
+
+
+
 
     override fun updateMarkers(filteredMarkers: List<MarkerData>) {
         // Your existing searchMarkers() implementation goes here

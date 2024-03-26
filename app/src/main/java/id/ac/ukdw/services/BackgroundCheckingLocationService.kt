@@ -50,11 +50,13 @@ class BackgroundCheckingLocationService : Service() {
             notificationViewModel.filteredData.observeForever { filteredData ->
 
                 for (location in filteredData) {
-                    val distance = distance(lat, long, location.lattitude, location.longitude)
-//                    val distance = distance(lat, long,-7.762767926089384, 110.39511268262554)
+                    //dibalik karena dari database kebalik :)
+                    val distance = distance(lat, long, location.longitude, location.lattitude)
+//                    val distance = distance(-7.767577291842697, 110.47681335135879,location.longitude, location.lattitude)
                     Log.d("disSer", "receiveLocationEvent: $distance")
-                    // Adjust the threshold as needed
-                    val distanceThreshold = 4 // Set your distance threshold here in kilometers
+
+
+                    val distanceThreshold = 1 // distance threshold here in kilometers
 
                     if (distance <= distanceThreshold) {
                         // Location is within range, create and show a notification
@@ -108,25 +110,24 @@ class BackgroundCheckingLocationService : Service() {
     }
 
 
-    private fun distance(lat1: Double, lng1: Double, lat2: Double, lng2: Double): Double {
-        val earthRadius = 6371 // in miles, change to 6371 for kilometer output
+    private fun distance(latFrom: Double, lonFrom: Double, latTo: Double, lonTo: Double): Double {
+        val earthRadiusKm = 6371.0
 
-        val dLat = Math.toRadians(lat2 - lat1)
-        val dLng = Math.toRadians(lng2 - lng1)
+        val dLat = Math.toRadians(latTo - latFrom)
+        val dLon = Math.toRadians(lonTo - lonFrom)
 
-        val sindLat = kotlin.math.sin(dLat / 2)
-        val sindLng = kotlin.math.sin(dLng / 2)
+        val sinDLat = kotlin.math.sin(dLat / 2)
+        val sinDLon = kotlin.math.sin(dLon / 2)
 
-        val a = sindLat.pow(2.0) +
-                (sindLng.pow(2.0) * kotlin.math.cos(Math.toRadians(lat1)) * kotlin.math.cos(
-                    Math.toRadians(
-                        lat2
-                    )
-                ))
+        val a = sinDLat * sinDLat +
+                kotlin.math.cos(Math.toRadians(latFrom)) * kotlin.math.cos(
+            Math.toRadians(latTo)
+        ) * sinDLon * sinDLon
 
         val c = 2 * kotlin.math.atan2(kotlin.math.sqrt(a), kotlin.math.sqrt(1 - a))
 
-        return earthRadius * c // output distance, in MILES
+        return earthRadiusKm * c
     }
+
 
 }

@@ -27,12 +27,11 @@
             android:layout_weight="0.5"
             android:textSize="24sp" />
         <ImageView
-            android:id="@+id/open_ar"
+            android:id="@+id/open_maps"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
-            android:src="@drawable/icon_open_ar"
-            android:contentDescription="@string/tampilkan_lokasi_di_ar" />
+            android:src="@drawable/icon_open_ar" />
     </LinearLayout>
 
     <View

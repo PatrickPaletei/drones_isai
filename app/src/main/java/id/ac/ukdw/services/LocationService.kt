@@ -31,7 +31,7 @@ class LocationService : Service() {
         super.onCreate()
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest =
-            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 60000).setIntervalMillis(60000)
+            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 600000).setIntervalMillis(600000)
                 .build()
         locationCallback = object : LocationCallback() {
 

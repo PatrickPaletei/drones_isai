@@ -23,7 +23,7 @@ class App : Application() {
             .build()
 
         val periodicWorkRequest =
-            PeriodicWorkRequestBuilder<LocationWorker>(1, TimeUnit.MINUTES)
+            PeriodicWorkRequestBuilder<LocationWorker>(10, TimeUnit.MINUTES)
                 .setConstraints(constraints)
                 .build()
 
