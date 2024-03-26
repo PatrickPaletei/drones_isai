@@ -6,7 +6,7 @@
     app:startDestination="@id/tentangFragment">
     <fragment
         android:id="@+id/locationFragment"
-        android:name="id.ac.ukdw.drones_isai.ui.Location.LocationFragment"
+        android:name="id.ac.ukdw.drones_isai.ui.location.LocationFragment"
         android:label="fragment_location"
         tools:layout="@layout/fragment_location" >
         <argument
